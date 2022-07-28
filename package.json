@@ -1,0 +1,36 @@
+{
+	"name": "discordbot",
+	"version": "1.0.0",
+	"main": "./dist/index.js",
+	"author": {
+		"name": "EvolutionX-10",
+		"url": "https://github.com/EvolutionX-10"
+	},
+	"license": "MIT",
+	"packageManager": "yarn@3.2.2",
+	"type": "module",
+	"imports": {
+		"#lib/*": "./dist/lib/*/index.js",
+		"#root": "./dist/index.js",
+		"#core": "./dist/core/index.js"
+	},
+	"scripts": {
+		"dev": "yarn build && node .",
+		"start": "node .",
+		"build": "tsup",
+		"typecheck": "tsc -b src",
+		"watch": "tsup --watch"
+	},
+	"dependencies": {
+		"colorette": "2.0.19",
+		"discord-api-types": "0.36.3",
+		"discord.js": "14.0.3",
+		"dotenv": "16.0.1"
+	},
+	"devDependencies": {
+		"@types/node": "18.6.2",
+		"prettier": "2.7.1",
+		"tsup": "6.2.0",
+		"typescript": "4.7.4"
+	}
+}

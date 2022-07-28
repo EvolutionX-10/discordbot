@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"outDir": "../dist",
+		"moduleResolution": "Node",
+		"baseUrl": ".",
+		"paths": {
+			"#lib/*": ["lib/*"],
+			"#root": ["dist/index.js"],
+			"#core": ["core/index.js"]
+		},
+		"rootDir": ".",
+		"allowJs": true,
+		"noEmit": true,
+		"strict": true,
+		"noUnusedLocals": false,
+		"skipLibCheck": true
+	}
+}
