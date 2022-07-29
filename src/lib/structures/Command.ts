@@ -35,7 +35,7 @@ export class Command<T extends ApplicationCommandType | string = ''> {
 		this.commandRun = data.commandRun as any;
 		this.messageRun = data.messageRun;
 		this.autoCompleteRun = data.autoCompleteRun;
-		this.permissions = data.defaultMemberPermissions;
+		this.permissions = data.defaultMemberPermissions ?? 0n;
 		this.runInDM = data.dmPermission ?? undefined;
 		this.ownerOnly = data.ownerOnly ?? undefined;
 
