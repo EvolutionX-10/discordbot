@@ -10,7 +10,7 @@
 
 ## About the project
 
-This project is not intended to be a full-functional bot, but rather a simple handler for handling of commands and events. I've seen a lot of people finding it hard to make their own handlers in TypeScript and ending up using `any` everywhere.
+This project is not intended to be a fully-functional bot, but rather a simple handler for handling of commands and events. I've seen a lot of people finding it hard to make their own handlers in TypeScript and ending up using `any` everywhere.
 This place can be a good start for you to begin your journey of making a bot in TypeScript without depending on other dedicated handlers. Custom handlers have this advantage that its your own handler, you can add whatever feature you like and whatever you want.
 
 ## Features
@@ -37,7 +37,7 @@ You also need to have a Discord Bot application created. If you haven't done it 
 ## Installation
 
 Now you can proceed to install dependencies. <br>
-After that we will compile our TypeScript code to JavaScript
+After that, we will compile our TypeScript code to JavaScript
 
 Note: This project uses `yarn` to manage dependencies. If you don't have `yarn` installed, you can install it using [`npm install -g yarn`](https://yarnpkg.com/en/docs/install).
 
@@ -104,7 +104,7 @@ export const listener = new Listener({
 
 ## Contributing
 
-To contribute to this repository, feel free to fork the repository and make your own changes. Once you have made your changes, you can submit a pull request.
+To contribute to this repository, feel free to fork the repository and make changes. Once you have made your changes, you can submit a pull request.
 A change should have a valid reason, and features should be added only if it's basic.
 
 1. Fork the repository and select the **main** branch.
