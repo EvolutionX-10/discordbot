@@ -1,8 +1,8 @@
 import type { Awaitable, ClientEvents } from 'discord.js';
 
-export class Listener<E extends keyof ClientEvents | string = ''> {
+export class Listener<E extends keyof ClientEvents = keyof ClientEvents> {
 	private data: ListenerOptions<E>;
-	public event: keyof ClientEvents | string;
+	public event: keyof ClientEvents;
 	public once: boolean;
 	public run: (
 		...args: E extends keyof ClientEvents ? ClientEvents[E] : unknown[]

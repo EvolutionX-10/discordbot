@@ -10,16 +10,18 @@ import {
 	UserContextMenuCommandInteraction,
 } from 'discord.js';
 
-export class Command<T extends ApplicationCommandType | string = ''> {
+export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	private data: CommandOptions<T>;
 	public description?: string;
-	public type: ApplicationCommandType | string;
+	public type: ApplicationCommandType | 'message';
 	public guildIds: string | string[] = [];
 	public options: ApplicationCommandOptionData[];
 	public permissions?: PermissionResolvable;
 	public runInDM?: boolean;
 	public ownerOnly?: boolean;
-	public commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
+	public commandRun?: T extends ApplicationCommandType
+		? (interaction: RunType<T>) => Promise<void> | unknown
+		: never;
 	public messageRun?: (
 		message: Message<boolean>,
 		args: string[]
@@ -60,7 +62,7 @@ export class Command<T extends ApplicationCommandType | string = ''> {
 	}
 }
 
-interface BaseCommandOptions<T extends ApplicationCommandType | string> {
+interface BaseCommandOptions<T extends ApplicationCommandType | 'message'> {
 	type: T;
 	name?: string;
 	options?: T extends ApplicationCommandType.ChatInput
@@ -70,14 +72,16 @@ interface BaseCommandOptions<T extends ApplicationCommandType | string> {
 	defaultMemberPermissions?: PermissionResolvable;
 	dmPermission?: boolean;
 	ownerOnly?: boolean;
-	commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
+	commandRun?: T extends ApplicationCommandType
+		? (interaction: RunType<T>) => Promise<void> | unknown
+		: never;
 	messageRun?: (
 		message: Message<boolean>,
 		args: string[]
 	) => Promise<void> | unknown;
-	autoCompleteRun?: (
-		interaction: AutocompleteInteraction
-	) => Promise<void> | unknown;
+	autoCompleteRun?: T extends ApplicationCommandType.ChatInput
+		? (interaction: AutocompleteInteraction) => Promise<void> | unknown
+		: never;
 }
 
 interface ChatInputCommandOptions
@@ -86,12 +90,12 @@ interface ChatInputCommandOptions
 	type: ApplicationCommandType.ChatInput;
 }
 
-type CommandOptions<T extends ApplicationCommandType | string> =
+type CommandOptions<T extends ApplicationCommandType | 'message'> =
 	T extends ApplicationCommandType.ChatInput
 		? ChatInputCommandOptions
 		: BaseCommandOptions<T>;
 
-type RunType<T extends ApplicationCommandType | string> =
+type RunType<T extends ApplicationCommandType | 'message'> =
 	T extends ApplicationCommandType.ChatInput
 		? ChatInputCommandInteraction
 		: T extends ApplicationCommandType.Message

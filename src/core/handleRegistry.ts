@@ -98,7 +98,7 @@ async function checkFromClient(client: Client, command: Command) {
 
 				logger.debug(`Updated Command ${command.name} -> ${guild.name}`);
 				continue;
-			}
+			} else logger.debug(`No differences found in Command ${command.name} -> ${guild.name}`);
 		}
 		const diff = Date.now() - now;
 		logger.debug(
@@ -137,7 +137,7 @@ async function checkFromClient(client: Client, command: Command) {
 			await APICommand.edit(providedCommandData);
 
 			logger.debug(`Updated Command ${command.name}`);
-		}
+		} else logger.debug(`No differences found in Command ${command.name}`);
 	}
 
 	const diff = Date.now() - now;
