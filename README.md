@@ -19,7 +19,10 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Fully ESM based
 - Minimal dependencies
 - Automated Registering/Updating/Deleting/Syncing of Application Commands
-- Default commands `ping`, `eval`, `reload`
+- Default commands
+	- Chat Input (Slash) Commands [`ping`, `reload`, `eval`]
+	- User Commands [`pong`]
+	- Message Commands [`say`]
 - Supports Message Commands, ChatInput Commands, ContextMenu Commands, and more
 - Type safe, simple, and easy to understand
 - Valid Autocompletions in your IDE for commands and listeners
