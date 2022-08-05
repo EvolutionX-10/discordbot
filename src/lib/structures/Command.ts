@@ -19,9 +19,7 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	public permissions?: PermissionResolvable;
 	public runInDM?: boolean;
 	public ownerOnly?: boolean;
-	public commandRun?: T extends ApplicationCommandType
-		? (interaction: RunType<T>) => Promise<void> | unknown
-		: never;
+	public commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
 	public messageRun?: (
 		message: Message<boolean>,
 		args: string[]
@@ -34,7 +32,9 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 		this.data = data;
 		this.type = data.type;
 		this.options = data.options ?? [];
-		this.commandRun = data.commandRun as any;
+		this.commandRun = data.commandRun as
+			| ((interaction: RunType<T>) => Promise<void> | unknown)
+			| undefined;
 		this.messageRun = data.messageRun;
 		this.autoCompleteRun = data.autoCompleteRun;
 		this.permissions = data.defaultMemberPermissions ?? 0n;
