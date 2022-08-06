@@ -9,8 +9,8 @@ export async function initiateCommands(
 ) {
 	client.logger.info(`Syncing Commands...`);
 	const now = Date.now();
-	register ? await registerCommands(client) : null;
-	sync ? await syncCommands(client) : null;
+	register && await registerCommands(client);
+	sync && await syncCommands(client);
 	const diff = Date.now() - now;
 	client.logger.info(`Commands Synced in ${diff.toLocaleString()}ms`);
 }
