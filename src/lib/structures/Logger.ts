@@ -8,7 +8,6 @@ import {
 import { LogLevel } from '#lib/enums';
 
 export class Logger {
-	public constructor() {}
 	public setLevel(level: LogLevel): void {
 		this.level = level;
 	}

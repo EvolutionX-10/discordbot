@@ -41,10 +41,10 @@ export async function handleRegistry(client: Client, reload: boolean = false) {
 }
 
 async function registerCommands(client: Client) {
-	const commandsWithchatInputRun = client.commands
+	const commandsWithChatInputRun = client.commands
 		.filter((c) => Boolean(c.commandRun))
 		.values();
-	for (const command of commandsWithchatInputRun) {
+	for (const command of commandsWithChatInputRun) {
 		await checkFromClient(client, command);
 	}
 }
@@ -97,7 +97,7 @@ async function checkFromClient(client: Client, command: Command) {
 				await APICommand.edit(providedCommandData);
 
 				logger.debug(`Updated Command ${command.name} -> ${guild.name}`);
-				continue;
+
 			} else logger.debug(`No differences found in Command ${command.name} -> ${guild.name}`);
 		}
 		const diff = Date.now() - now;
