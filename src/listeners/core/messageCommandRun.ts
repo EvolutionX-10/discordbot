@@ -18,7 +18,9 @@ export const listener = new Listener({
 		);
 
 		const commandName = commandWithPrefix.slice(prefix?.length || 0);
-		const command = message.client.commands.get(commandName);
+		const command =
+			message.client.commands.get(commandName) ||
+			message.client.commands.find((cmd) => cmd.aliases!.includes(commandName));
 
 		if (!command) return;
 

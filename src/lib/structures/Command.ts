@@ -18,6 +18,7 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	public options: ApplicationCommandOptionData[];
 	public permissions?: PermissionResolvable;
 	public runInDM?: boolean;
+	public aliases?: string[];
 	public ownerOnly?: boolean;
 	public commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
 	public messageRun?: (
@@ -32,6 +33,7 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 		this.data = data;
 		this.type = data.type;
 		this.options = data.options ?? [];
+		this.aliases = data.aliases ?? [];
 		this.commandRun = data.commandRun as
 			| ((interaction: RunType<T>) => Promise<void> | unknown)
 			| undefined;
@@ -69,6 +71,7 @@ interface BaseCommandOptions<T extends ApplicationCommandType | 'message'> {
 		? ApplicationCommandOptionData[]
 		: never;
 	guildIds?: string | string[];
+	aliases?: string[];
 	defaultMemberPermissions?: PermissionResolvable;
 	dmPermission?: boolean;
 	ownerOnly?: boolean;
