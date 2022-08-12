@@ -1,11 +1,12 @@
-import type { Awaitable, ClientEvents } from 'discord.js';
+import type { Awaitable, ClientEvents, CommandInteraction, Message } from 'discord.js';
+import { Command } from './Command.js';
 
-export class Listener<E extends keyof ClientEvents = keyof ClientEvents> {
+export class Listener<E extends keyof Events = keyof Events> {
 	private data: ListenerOptions<E>;
-	public event: keyof ClientEvents;
+	public event: E extends keyof Events ? E : never;
 	public once: boolean;
 	public run: (
-		...args: E extends keyof ClientEvents ? ClientEvents[E] : unknown[]
+		...args: E extends keyof Events ? Events[E] : unknown[]
 	) => Awaitable<void>;
 
 	public constructor(data: ListenerOptions<E>) {
@@ -25,9 +26,16 @@ export class Listener<E extends keyof ClientEvents = keyof ClientEvents> {
 
 interface ListenerOptions<T> {
 	name?: string;
-	event: T extends keyof ClientEvents ? T : keyof ClientEvents;
+	event: T extends keyof Events ? T : never;
 	once?: boolean;
 	run(
-		...args: T extends keyof ClientEvents ? ClientEvents[T] : unknown[]
+		...args: T extends keyof Events ? Events[T] : unknown[]
 	): Awaitable<void>;
+}
+
+export interface Events extends ClientEvents {
+	messageCommandAccepted: [command: Command, message: Message];
+	messageCommandFinish: [command: Command, message: Message];
+	applicationCommandAccepted: [command: Command, interaction: CommandInteraction];
+	applicationCommandFinish: [command: Command, interaction: CommandInteraction];
 }

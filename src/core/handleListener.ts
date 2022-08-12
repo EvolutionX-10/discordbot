@@ -1,4 +1,4 @@
-import { Client, Listener } from '#lib/structures';
+import { Client, Listener, Events as CustomEvents } from '#lib/structures';
 import { readdirSync } from 'fs';
 
 export async function handleListener(client: Client, reload: boolean = false) {
@@ -25,5 +25,22 @@ export async function handleListener(client: Client, reload: boolean = false) {
 				client.on(listener.event, listener.run);
 			}
 		}
+	}
+}
+
+declare module 'discord.js' {
+	interface Client {
+		on<K extends keyof CustomEvents>(
+			event: K,
+			listener: (...args: CustomEvents[K]) => Awaitable<void>
+		): this;
+		once<K extends keyof CustomEvents>(
+			event: K,
+			listener: (...args: CustomEvents[K]) => Awaitable<void>
+		): this;
+		emit<K extends keyof CustomEvents>(
+			event: K,
+			...args: CustomEvents[K]
+		): boolean;
 	}
 }

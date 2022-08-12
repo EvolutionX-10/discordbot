@@ -27,6 +27,8 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 
 	public listener: Collection<string, Listener> = new Collection();
 
+	public cooldowns: Collection<string, number> = new Collection();
+
 	public logger: Logger = new Logger();
 
 	public override async login(token?: string | undefined): Promise<string> {
@@ -41,6 +43,7 @@ declare module 'discord.js' {
 		ownerIds: string[];
 		commands: Collection<string, Command>;
 		listener: Collection<string, Listener>;
+		cooldowns: Collection<string, number>;
 		logger: Logger;
 		prefixes: string[];
 	}

@@ -30,7 +30,9 @@ export const listener = new Listener({
 				!message.client.ownerIds.includes(message.author.id)
 			)
 				return;
+			message.client.emit('commandAccepted', command, message);
 			await command.messageRun(message, args);
+			message.client.emit('commandFinish', command, message);
 		}
 	},
 });

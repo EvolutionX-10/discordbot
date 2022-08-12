@@ -20,6 +20,9 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	public runInDM?: boolean;
 	public aliases?: string[];
 	public ownerOnly?: boolean;
+	public cooldown?: number;
+	public cooldownLimit?: number;
+	public cooldownScope?: CooldownScope;
 	public commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
 	public messageRun?: (
 		message: Message<boolean>,
@@ -75,6 +78,9 @@ interface BaseCommandOptions<T extends ApplicationCommandType | 'message'> {
 	defaultMemberPermissions?: PermissionResolvable;
 	dmPermission?: boolean;
 	ownerOnly?: boolean;
+	cooldown?: number;
+	cooldownLimit?: number;
+	cooldownScope?: CooldownScope;
 	commandRun?: T extends ApplicationCommandType
 		? (interaction: RunType<T>) => Promise<void> | unknown
 		: never;
@@ -106,3 +112,10 @@ type RunType<T extends ApplicationCommandType | 'message'> =
 		: T extends ApplicationCommandType.User
 		? UserContextMenuCommandInteraction
 		: CommandInteraction;
+
+export enum CooldownScope {
+	Global = 'global',
+	Guild = 'guild',
+	User = 'user',
+	Channel = 'channel',
+}

@@ -13,7 +13,9 @@ export const listener = new Listener({
 			if (command && command.commandRun) {
 				if (command.ownerOnly && !client.ownerIds.includes(interaction.user.id))
 					return;
+				client.emit('applicationCommandAccepted', command, interaction);
 				await command.commandRun(interaction);
+				client.emit('applicationCommandFinish', command, interaction);
 			}
 		}
 
