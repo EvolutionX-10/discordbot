@@ -23,9 +23,9 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 
 	public ownerIds: string[] = [];
 
-	public commands: Collection<string, Command> = new Collection();
+	public commands = new Collection<string, Command>();
 
-	public listener: Collection<string, Listener> = new Collection();
+	public listener = new Collection<string, Listener>();
 
 	public logger: Logger = new Logger();
 
