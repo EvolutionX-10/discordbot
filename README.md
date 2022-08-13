@@ -27,6 +27,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Type safe, simple, and easy to understand
 - Valid Autocompletions in your IDE for commands and listeners
 - Colorful and detailed logging
+- Paginator Class for easy pagination using embeds, buttons, and select menus!
 
 ## Before you begin
 
