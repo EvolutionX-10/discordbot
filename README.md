@@ -28,6 +28,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Valid Autocompletions in your IDE for commands and listeners
 - Colorful and detailed logging
 - Paginator Class for easy pagination using embeds, buttons, and select menus!
+- Resolver Class for easy resolving of multi mentions in chat input commands
 
 ## Before you begin
 
