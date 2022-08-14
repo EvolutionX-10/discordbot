@@ -22,25 +22,31 @@ export class Resolver {
 		private readonly interaction: CommandInteraction
 	) {}
 
+	readonly #regex = {
+		Channel: /<#(?<id>\d{17,20})>/g,
+		Role: /<@&(?<id>\d{17,20})>/g,
+		User: /<@!?(?<id>\d{17,20})>/g,
+	};
+
+	private getIds(mentionType: 'Channel' | 'Role' | 'User'): string[] {
+		const matches = this.content.matchAll(this.#regex[mentionType]);
+		return Array.from(matches)
+			.map((match) => match.groups?.id)
+			.filter(Boolean) as string[];
+	}
+
 	/**
 	 * Resolves a user from the content.
 	 * @returns The collection of resolved {@link User users}.
 	 */
 	public get users(): Readonly<Collection<Snowflake, User>> {
-		const collection = new Collection<Snowflake, User>();
-		const regex = /<@!?(?<id>\d{17,20})>/g;
+		const users = this.getIds('User')
+			.map((id) => this.interaction.client.users.cache.get(id))
+			.filter(Boolean) as User[];
 
-		const matches = this.content.matchAll(regex);
-		const ids = Array.from(matches)
-			.map((match) => match.groups?.id)
-			.filter((e) => !!e) as string[];
-		for (const id of ids) {
-			const user = this.interaction.client.users.cache.get(id);
-			if (user) {
-				collection.set(id, user);
-			}
-		}
-		return collection;
+		return new Collection<Snowflake, User>(
+			Array.from(users).map((user) => [user.id, user])
+		);
 	}
 
 	/**
@@ -48,20 +54,13 @@ export class Resolver {
 	 * @returns The collection of resolved {@link GuildMember members}.
 	 */
 	public get members(): Readonly<Collection<Snowflake, GuildMember>> {
-		const collection = new Collection<Snowflake, GuildMember>();
-		const regex = /<@!?(?<id>\d{17,20})>/g;
+		const members = this.getIds('User')
+			.map((id) => this.interaction.guild?.members.cache.get(id))
+			.filter(Boolean) as GuildMember[];
 
-		const matches = this.content.matchAll(regex);
-		const ids = Array.from(matches)
-			.map((match) => match.groups?.id)
-			.filter((e) => !!e) as string[];
-		for (const id of ids) {
-			const member = this.interaction.guild?.members.cache.get(id);
-			if (member) {
-				collection.set(id, member);
-			}
-		}
-		return collection;
+		return new Collection<Snowflake, GuildMember>(
+			Array.from(members).map((member) => [member.id, member])
+		);
 	}
 
 	/**
@@ -69,20 +68,13 @@ export class Resolver {
 	 * @returns The collection of resolved {@link GuildBasedChannel channels}.
 	 */
 	public get channels(): Readonly<Collection<Snowflake, GuildBasedChannel>> {
-		const collection = new Collection<Snowflake, GuildBasedChannel>();
-		const regex = /<#(?<id>\d{17,20})>/g;
+		const channels = this.getIds('User')
+			.map((id) => this.interaction.guild?.channels.cache.get(id))
+			.filter(Boolean) as GuildBasedChannel[];
 
-		const matches = this.content.matchAll(regex);
-		const ids = Array.from(matches)
-			.map((match) => match.groups?.id)
-			.filter((e) => !!e) as string[];
-		for (const id of ids) {
-			const channel = this.interaction.guild?.channels.cache.get(id);
-			if (channel) {
-				collection.set(id, channel);
-			}
-		}
-		return collection;
+		return new Collection<Snowflake, GuildBasedChannel>(
+			Array.from(channels).map((channel) => [channel.id, channel])
+		);
 	}
 
 	/**
@@ -90,19 +82,12 @@ export class Resolver {
 	 * @returns The collection of resolved {@link Role roles}.
 	 */
 	public get roles(): Readonly<Collection<Snowflake, Role>> {
-		const collection = new Collection<Snowflake, Role>();
-		const regex = /<@&(?<id>\d{17,20})>/g;
+		const roles = this.getIds('Role')
+			.map((id) => this.interaction.guild?.roles.cache.get(id))
+			.filter(Boolean) as Role[];
 
-		const matches = this.content.matchAll(regex);
-		const ids = Array.from(matches)
-			.map((match) => match.groups?.id)
-			.filter((e) => !!e) as string[];
-		for (const id of ids) {
-			const role = this.interaction.guild?.roles.cache.get(id);
-			if (role) {
-				collection.set(id, role);
-			}
-		}
-		return collection;
+		return new Collection<Snowflake, Role>(
+			Array.from(roles).map((role) => [role.id, role])
+		);
 	}
 }
