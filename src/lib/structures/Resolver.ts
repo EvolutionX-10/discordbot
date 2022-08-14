@@ -43,7 +43,7 @@ export class Resolver {
 		const users = this.getIds('User')
 			.map((id) => this.interaction.client.users.cache.get(id))
 			.filter(Boolean)
-			.map((u) => [u!.id, u!]) as [Snowflake, User][];
+			.map((u) => [u!.id, u]) as [Snowflake, User][];
 
 		return new Collection<Snowflake, User>(users);
 	}
@@ -56,7 +56,7 @@ export class Resolver {
 		const members = this.getIds('User')
 			.map((id) => this.interaction.guild?.members.cache.get(id))
 			.filter(Boolean)
-			.map((m) => [m!.id, m!]) as [Snowflake, GuildMember][];
+			.map((m) => [m!.id, m]) as [Snowflake, GuildMember][];
 
 		return new Collection<Snowflake, GuildMember>(members);
 	}
@@ -69,7 +69,7 @@ export class Resolver {
 		const channels = this.getIds('User')
 			.map((id) => this.interaction.guild?.channels.cache.get(id))
 			.filter(Boolean)
-			.map((c) => [c!.id, c!]) as [Snowflake, GuildBasedChannel][];
+			.map((c) => [c!.id, c]) as [Snowflake, GuildBasedChannel][];
 
 		return new Collection<Snowflake, GuildBasedChannel>(channels);
 	}
@@ -82,7 +82,7 @@ export class Resolver {
 		const roles = this.getIds('Role')
 			.map((id) => this.interaction.guild?.roles.cache.get(id))
 			.filter(Boolean)
-			.map((r) => [r!.id, r!]) as [Snowflake, Role][];
+			.map((r) => [r!.id, r]) as [Snowflake, Role][];
 
 		return new Collection<Snowflake, Role>(roles);
 	}
