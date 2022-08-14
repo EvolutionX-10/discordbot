@@ -66,7 +66,7 @@ export class Resolver {
 	 * @returns The collection of resolved {@link GuildBasedChannel channels}.
 	 */
 	public get channels(): Readonly<Collection<Snowflake, GuildBasedChannel>> {
-		const channels = this.getIds('User')
+		const channels = this.getIds('Channel')
 			.map((id) => this.interaction.guild?.channels.cache.get(id))
 			.filter(Boolean)
 			.map((c) => [c!.id, c]) as [Snowflake, GuildBasedChannel][];
