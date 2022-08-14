@@ -20,9 +20,9 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Minimal dependencies
 - Automated Registering/Updating/Deleting/Syncing of Application Commands
 - Default commands
-	- Chat Input (Slash) Commands [`ping`, `reload`, `eval`]
-	- User Commands [`pong`]
-	- Message Commands [`say`]
+  - Chat Input (Slash) Commands [`ping`, `reload`, `eval`]
+  - User Commands [`pong`]
+  - Message Commands [`say`]
 - Supports Message Commands, ChatInput Commands, ContextMenu Commands, and more
 - Type safe, simple, and easy to understand
 - Valid Autocompletions in your IDE for commands and listeners
@@ -72,6 +72,7 @@ Note: You need to have node version `16.9` or higher!
 ## Commands
 
 Each command needs to be exported as `command`
+
 #### Example:
 
 ```ts
@@ -93,6 +94,7 @@ export const command = new Command({
 ## Listeners
 
 Each listener needs to be exported as `listener`
+
 #### Example:
 
 ```ts
