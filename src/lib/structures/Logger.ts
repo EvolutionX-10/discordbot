@@ -4,6 +4,7 @@ import {
 	yellowBright,
 	redBright,
 	magentaBright,
+	gray,
 } from 'colorette';
 import { LogLevel } from '#lib/enums';
 
@@ -34,7 +35,7 @@ export class Logger {
 		this.log(LogLevel.Error, 'ERROR', redBright, message, ...args);
 	}
 	public debug(message: string, ...args: unknown[]): void {
-		this.log(LogLevel.Debug, 'DEBUG', magentaBright, message, ...args);
+		this.log(LogLevel.Debug, 'DEBUG', magentaBright, gray(message), ...args);
 	}
 	private level: LogLevel = LogLevel.Info;
 }

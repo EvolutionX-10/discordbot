@@ -9,8 +9,10 @@ export async function initiateCommands(
 ) {
 	client.logger.info(`Syncing Commands...`);
 	const now = Date.now();
-	register && await registerCommands(client);
-	sync && await syncCommands(client);
+	await Promise.all([
+		register && registerCommands(client),
+		sync && syncCommands(client),
+	]);
 	const diff = Date.now() - now;
 	client.logger.info(`Commands Synced in ${diff.toLocaleString()}ms`);
 }
@@ -45,23 +47,21 @@ async function registerCommands(client: Client) {
 		.filter((c) => Boolean(c.commandRun))
 		.values();
 	for (const command of commandsWithChatInputRun) {
-		await checkFromClient(client, command);
+		checkFromClient(client, command);
 	}
 }
 
 async function checkFromClient(client: Client, command: Command) {
 	const { logger } = client;
 	// Guild Command Check
+
+	logger.debug(`Checking if ${command.name} is already registered`);
+
 	if (command.guildIds?.length) {
-		const now = Date.now();
 		for (const guildId of command.guildIds) {
 			const guild = await client.guilds.fetch(guildId).catch(() => null);
 
 			if (!guild) throw new Error('Invalid Guild!');
-
-			logger.debug(
-				`Checking if ${command.name} is already registered -> ${guild.name}`
-			);
 
 			const APICommand = (await guild.commands.fetch()).find(
 				(cmd) => cmd.name === command.name
@@ -77,40 +77,21 @@ async function checkFromClient(client: Client, command: Command) {
 			};
 
 			if (!APICommand) {
-				logger.debug(`${command.name} is not registered -> ${guild.name}`);
-				logger.debug(`Registering ${command.name} -> ${guild.name}`);
-
 				await guild.commands.create(providedCommandData);
-
 				logger.info(`Created Command ${command.name} -> ${guild.name}`);
 				continue;
 			}
 
-			logger.debug(
-				`Checking differences in Command ${command.name} -> ${guild.name}`
-			);
 			if (!APICommand.equals(providedCommandData, true)) {
-				logger.debug(
-					`Found differences in Command ${command.name} -> ${guild.name}`
-				);
-
 				await APICommand.edit(providedCommandData);
-
 				logger.debug(`Updated Command ${command.name} -> ${guild.name}`);
-
-			} else logger.debug(`No differences found in Command ${command.name} -> ${guild.name}`);
+			}
 		}
-		const diff = Date.now() - now;
-		logger.debug(
-			`Processed Command ${command.name} in ${diff.toLocaleString()}ms`
-		);
+		logger.debug(`Processed Command ${command.name}`);
 		return;
 	}
 
 	// Global Command Check
-	const now = Date.now();
-
-	logger.debug(`Checking if ${command.name} is already registered`);
 
 	const APICommand = (
 		await (await client.application?.fetch())!.commands.fetch()
@@ -123,27 +104,16 @@ async function checkFromClient(client: Client, command: Command) {
 		description: command.description ?? '',
 	};
 	if (!APICommand) {
-		logger.debug(`${command.name} is not registered`);
-		logger.debug(`Registering Command ${command.name}`);
-
 		await client.application!.commands.create(providedCommandData);
-
 		logger.info(`Created Command ${command.name}`);
 	} else {
-		logger.debug(`Checking differences in Command ${command.name}`);
 		if (!APICommand.equals(providedCommandData, true)) {
-			logger.debug(`Found differences in Command ${command.name}`);
-
 			await APICommand.edit(providedCommandData);
-
 			logger.debug(`Updated Command ${command.name}`);
-		} else logger.debug(`No differences found in Command ${command.name}`);
+		}
 	}
 
-	const diff = Date.now() - now;
-	logger.debug(
-		`Processed Command ${command.name} in ${diff.toLocaleString()}ms`
-	);
+	logger.debug(`Processed Command ${command.name}`);
 	return;
 }
 
@@ -172,8 +142,8 @@ async function syncCommands(client: Client) {
 	} else logger.debug(`No Global Commands found to remove, All synced!`);
 
 	for (const command of toRemove) {
-		await APIGlobalCommands.find((cmd) => cmd.name === command)?.delete();
 		logger.debug(`Deleted Global Command: ${command}`);
+		APIGlobalCommands.find((cmd) => cmd.name === command)?.delete();
 	}
 
 	// Guild
@@ -207,8 +177,8 @@ async function syncCommands(client: Client) {
 			);
 
 		for (const command of toRemove) {
-			await APIGuildCommands.find((cmd) => cmd.name === command)?.delete();
 			logger.debug(`Deleted Guild Command ${command} -> ${guild.name}`);
+			APIGuildCommands.find((cmd) => cmd.name === command)?.delete();
 		}
 	}
 }

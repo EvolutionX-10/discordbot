@@ -1,4 +1,4 @@
-export enum LogLevel {
+export const enum LogLevel {
 	Info = 0,
 	Warn = 1,
 	Error = 2,

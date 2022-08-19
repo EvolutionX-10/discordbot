@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Client as DJSClient, GatewayIntentBits, Collection } from 'discord.js';
 import { Command, Listener, Logger } from '#lib/structures';
-import { handleListener, handleRegistry } from '#core';
+import { handleListener, handleRegistry, initiateCommands } from '#core';
 import { LogLevel } from '#lib/enums';
 
 export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
@@ -32,7 +32,10 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 	public override async login(token?: string | undefined): Promise<string> {
 		handleRegistry(this);
 		handleListener(this);
-		return super.login(token);
+		const promiseString = await super.login(token);
+		this.logger.info(`Logged in as ${this.user?.tag}`);
+		await initiateCommands(this, true, true);
+		return promiseString;
 	}
 }
 
