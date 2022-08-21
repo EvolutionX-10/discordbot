@@ -20,15 +20,17 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Minimal dependencies
 - Automated Registering/Updating/Deleting/Syncing of Application Commands
 - Default commands
-  - Chat Input (Slash) Commands [`ping`, `reload`, `eval`]
+  - Chat Input (Slash) Commands [`ping`, `reload`, `eval`, `paginate`]
   - User Commands [`pong`]
-  - Message Commands [`say`]
-- Supports Message Commands, ChatInput Commands, ContextMenu Commands, and more
+  - Message Commands [`save`]
+  - Legacy Commands [`say`]
+- Supports Message Commands, Chat Input Commands, ContextMenu Commands, and more!
 - Type safe, simple, and easy to understand
-- Valid Autocompletions in your IDE for commands and listeners
+- Valid and Robust Autocompletions in your IDE for commands and listeners
+- Extended Client with useful features
 - Colorful and detailed logging
 - Paginator Class for easy pagination using embeds, buttons, and select menus!
-- Resolver Class for easy resolving of multi mentions in chat input commands
+- Resolver Class for easy resolving of multi mentions in chat input command option!
 
 ## Before you begin
 
@@ -41,7 +43,7 @@ You also need to have a Discord Bot application created. If you haven't done it 
 
 ## Installation
 
-Now you can proceed to install dependencies. <br>
+Now you can proceed to install dependencies. <br />
 After that, we will compile our TypeScript code to JavaScript
 
 Note: This project uses `yarn` to manage dependencies. If you don't have `yarn` installed, you can install it using [`npm install -g yarn`](https://yarnpkg.com/en/docs/install).
@@ -71,16 +73,14 @@ Note: You need to have node version `16.9` or higher!
 
 ## Commands
 
-Each command needs to be exported as `command`
-
-#### Example:
+#### Example
 
 ```ts
+import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
-import { ApplicationCommandType } from 'discord.js';
 
-export const command = new Command({
-	type: ApplicationCommandType.ChatInput,
+export default new Command({
+	type: CommandType.ChatInput,
 	description: 'Ping Pong!!',
 	commandRun(interaction) {
 		return interaction.reply({ content: 'Pong!', ephemeral: true });
@@ -93,17 +93,15 @@ export const command = new Command({
 
 ## Listeners
 
-Each listener needs to be exported as `listener`
-
-#### Example:
+#### Example
 
 ```ts
 import { Listener } from '#lib/structures';
 
-export const listener = new Listener({
+export default new Listener({
 	event: 'ready',
 	once: true,
-	async run(client) {
+	run(client) {
 		client.logger.info(`Logged in as ${client.user.tag}`);
 	},
 });

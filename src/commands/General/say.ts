@@ -1,7 +1,8 @@
+import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
 
-export const command = new Command({
-	type: 'message',
+export default new Command({
+	type: CommandType.Legacy,
 	messageRun(message, args) {
 		if (!args.length)
 			return message.reply("You didn't provide a message to say!");

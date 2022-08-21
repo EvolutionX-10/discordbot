@@ -1,6 +1,6 @@
+import { CommandType } from '#lib/enums';
 import {
 	ApplicationCommandOptionData,
-	ApplicationCommandType,
 	AutocompleteInteraction,
 	ChatInputCommandInteraction,
 	CommandInteraction,
@@ -10,12 +10,12 @@ import {
 	UserContextMenuCommandInteraction,
 } from 'discord.js';
 
-export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
+export class Command<T extends CommandType = CommandType> {
 	private data: CommandOptions<T>;
 	public description?: string;
-	public type: ApplicationCommandType | 'message';
+	public type: CommandType;
 	public guildIds: string | string[] = [];
-	public options: ApplicationCommandOptionData[];
+	public options?: ApplicationCommandOptionData[] = [];
 	public permissions?: PermissionResolvable;
 	public runInDM?: boolean;
 	public aliases?: string[];
@@ -32,7 +32,6 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	public constructor(data: CommandOptions<T>) {
 		this.data = data;
 		this.type = data.type;
-		this.options = data.options ?? [];
 		this.aliases = data.aliases ?? [];
 		this.commandRun = data.commandRun as
 			| ((interaction: RunType<T>) => Promise<void> | unknown)
@@ -43,15 +42,16 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 		this.runInDM = data.dmPermission ?? undefined;
 		this.ownerOnly = data.ownerOnly ?? undefined;
 
-		if (data.type === ApplicationCommandType.ChatInput) {
+		if (data.type === CommandType.ChatInput) {
 			this.description = (data as ChatInputCommandOptions).description;
+			this.options = (data as ChatInputCommandOptions).options;
 		}
 
 		if (typeof this.data.guildIds === 'string') {
 			this.data.guildIds = [this.data.guildIds];
 		}
 
-		this.guildIds = this.data.guildIds ?? ['991194621763919971']; // Keep it empty for global commands
+		this.guildIds = this.data.guildIds ?? []; // Keep it empty for global commands
 	}
 
 	public set name(name: string) {
@@ -64,45 +64,44 @@ export class Command<T extends ApplicationCommandType | 'message' = 'message'> {
 	}
 }
 
-interface BaseCommandOptions<T extends ApplicationCommandType | 'message'> {
+interface BaseCommandOptions<T extends CommandType> {
 	type: T;
 	name?: string;
-	options?: T extends ApplicationCommandType.ChatInput
-		? ApplicationCommandOptionData[]
-		: never;
 	guildIds?: string | string[];
 	aliases?: string[];
+	description?: string;
 	defaultMemberPermissions?: PermissionResolvable;
 	dmPermission?: boolean;
 	ownerOnly?: boolean;
-	commandRun?: T extends ApplicationCommandType
-		? (interaction: RunType<T>) => Promise<void> | unknown
-		: never;
+	commandRun?: T extends CommandType.Legacy
+		? never
+		: (interaction: RunType<T>) => Promise<void> | unknown;
 	messageRun?: (
 		message: Message<boolean>,
 		args: string[]
 	) => Promise<void> | unknown;
-	autoCompleteRun?: T extends ApplicationCommandType.ChatInput
+	autoCompleteRun?: T extends CommandType.ChatInput
 		? (interaction: AutocompleteInteraction) => Promise<void> | unknown
 		: never;
 }
 
 interface ChatInputCommandOptions
-	extends BaseCommandOptions<ApplicationCommandType.ChatInput> {
+	extends BaseCommandOptions<CommandType.ChatInput> {
 	description: string;
-	type: ApplicationCommandType.ChatInput;
+	options?: ApplicationCommandOptionData[];
+	type: CommandType.ChatInput;
 }
 
-type CommandOptions<T extends ApplicationCommandType | 'message'> =
-	T extends ApplicationCommandType.ChatInput
-		? ChatInputCommandOptions
-		: BaseCommandOptions<T>;
+type CommandOptions<T extends CommandType> = T extends CommandType.ChatInput
+	? ChatInputCommandOptions
+	: T extends CommandType.Legacy
+	? BaseCommandOptions<T> & Required<Pick<BaseCommandOptions<T>, 'messageRun'>>
+	: BaseCommandOptions<T> & Required<Pick<BaseCommandOptions<T>, 'commandRun'>>;
 
-type RunType<T extends ApplicationCommandType | 'message'> =
-	T extends ApplicationCommandType.ChatInput
-		? ChatInputCommandInteraction
-		: T extends ApplicationCommandType.Message
-		? MessageContextMenuCommandInteraction
-		: T extends ApplicationCommandType.User
-		? UserContextMenuCommandInteraction
-		: CommandInteraction;
+type RunType<T extends CommandType> = T extends CommandType.ChatInput
+	? ChatInputCommandInteraction
+	: T extends CommandType.Message
+	? MessageContextMenuCommandInteraction
+	: T extends CommandType.User
+	? UserContextMenuCommandInteraction
+	: never;

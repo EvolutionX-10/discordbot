@@ -1,11 +1,11 @@
 import { handleListener, handleRegistry, initiateCommands } from '#core';
-import { Command, Client } from '#lib/structures';
-import { ApplicationCommandType } from 'discord.js';
+import { CommandType } from '#lib/enums';
+import { Client, Command } from '#lib/structures';
 
-export const command = new Command({
-	type: ApplicationCommandType.ChatInput,
+export default new Command({
+	type: CommandType.ChatInput,
 	description: 'Reloads the bot',
-	guildIds: '991194621763919971',
+	guildIds: ['991194621763919971'],
 	ownerOnly: true,
 	async commandRun(interaction) {
 		await interaction.deferReply({ ephemeral: true });

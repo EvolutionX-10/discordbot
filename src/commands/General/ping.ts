@@ -1,11 +1,9 @@
+import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
-import {
-	ApplicationCommandOptionType,
-	ApplicationCommandType,
-} from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 
-export const command = new Command({
-	type: ApplicationCommandType.ChatInput,
+export default new Command({
+	type: CommandType.ChatInput,
 	description: 'Ping Pong!!',
 	options: [
 		{

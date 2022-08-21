@@ -1,10 +1,11 @@
+import { CommandType } from '#lib/enums';
 import { Command, Paginator } from '#lib/structures';
-import { ApplicationCommandType, EmbedBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 const strings = ['ok', 'bye', 'hi', 'hello', 'foo', 'bar'];
 const template = new EmbedBuilder().setTitle('Pagination');
 
-export const command = new Command({
-	type: ApplicationCommandType.ChatInput,
+export default new Command({
+	type: CommandType.ChatInput,
 	description: 'Enjoy Pagination',
 	aliases: ['p'],
 	messageRun(message) {

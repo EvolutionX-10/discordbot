@@ -1,7 +1,7 @@
 import { Listener } from '#lib/structures';
 import { InteractionType } from 'discord.js';
 
-export const listener = new Listener({
+export default new Listener({
 	event: 'interactionCreate',
 	async run(interaction) {
 		const { client } = interaction;

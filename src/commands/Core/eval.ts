@@ -1,14 +1,13 @@
+import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
-import {
-	ApplicationCommandOptionType,
-	ApplicationCommandType,
-} from 'discord.js';
+import { ApplicationCommandOptionType } from 'discord.js';
 import { inspect } from 'node:util';
 
-export const command = new Command({
-	type: ApplicationCommandType.ChatInput,
+export default new Command({
+	type: CommandType.ChatInput,
 	description: 'Eval Some Code',
 	ownerOnly: true,
+	guildIds: ['991194621763919971'],
 	options: [
 		{
 			name: 'code',
@@ -19,7 +18,7 @@ export const command = new Command({
 	],
 	async commandRun(interaction) {
 		const code = interaction.options.getString('code', true);
-
+		const { client, channel, user, member } = interaction;
 		await interaction.deferReply();
 
 		let result = await eval(code);

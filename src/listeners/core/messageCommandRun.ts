@@ -1,6 +1,6 @@
 import { Listener } from '#lib/structures';
 
-export const listener = new Listener({
+export default new Listener({
 	event: 'messageCreate',
 	async run(message) {
 		if (message.author?.bot || message?.webhookId) return;
@@ -24,13 +24,12 @@ export const listener = new Listener({
 
 		if (!command) return;
 
-		if (command.messageRun) {
-			if (
-				command.ownerOnly &&
-				!message.client.ownerIds.includes(message.author.id)
-			)
-				return;
-			await command.messageRun(message, args);
-		}
+		if (!command.messageRun) return;
+		if (
+			command.ownerOnly &&
+			!message.client.ownerIds.includes(message.author.id)
+		)
+			return;
+		await command.messageRun(message, args);
 	},
 });

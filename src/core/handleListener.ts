@@ -13,7 +13,9 @@ export async function handleListener(client: Client, reload: boolean = false) {
 				? `../listeners/${folder}/${file}?update=${Date.now()}`
 				: `../listeners/${folder}/${file}`;
 
-			const { listener } = (await import(path)) as { listener: Listener };
+			const { default: listener } = (await import(path)) as {
+				default: Listener;
+			};
 			listener.name = file.slice(0, -3);
 			client.listener.set(listener.name, listener);
 

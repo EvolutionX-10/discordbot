@@ -1,4 +1,5 @@
-import { Command, Client } from '#lib/structures';
+import { CommandType } from '#lib/enums';
+import { Client, Command } from '#lib/structures';
 import { ApplicationCommandData, ApplicationCommandType } from 'discord.js';
 import { readdirSync } from 'fs';
 
@@ -28,7 +29,7 @@ export async function handleRegistry(client: Client, reload: boolean = false) {
 			const path = reload
 				? `../commands/${folder}/${file}?update=${Date.now()}`
 				: `../commands/${folder}/${file}`;
-			const { command } = (await import(path)) as { command: Command };
+			const { default: command } = (await import(path)) as { default: Command };
 
 			if (!command)
 				throw new Error(
@@ -44,7 +45,7 @@ export async function handleRegistry(client: Client, reload: boolean = false) {
 
 async function registerCommands(client: Client) {
 	const commandsWithChatInputRun = client.commands
-		.filter((c) => Boolean(c.commandRun))
+		.filter((c) => Boolean(c.commandRun) && c.type !== CommandType.Legacy)
 		.values();
 	for (const command of commandsWithChatInputRun) {
 		checkFromClient(client, command);
@@ -69,13 +70,12 @@ async function checkFromClient(client: Client, command: Command) {
 
 			const providedCommandData: ApplicationCommandData = {
 				name: command.name,
-				type: command.type as ApplicationCommandType,
+				type: command.type as unknown as ApplicationCommandType,
 				options: command.options,
 				description: command.description ?? '',
 				defaultMemberPermissions: command.permissions,
 				dmPermission: command.runInDM,
 			};
-
 			if (!APICommand) {
 				await guild.commands.create(providedCommandData);
 				logger.info(`Created Command ${command.name} -> ${guild.name}`);
@@ -99,9 +99,11 @@ async function checkFromClient(client: Client, command: Command) {
 
 	const providedCommandData: ApplicationCommandData = {
 		name: command.name,
-		type: command.type as ApplicationCommandType,
+		type: command.type as unknown as ApplicationCommandType,
 		options: command.options,
 		description: command.description ?? '',
+		defaultMemberPermissions: command.permissions,
+		dmPermission: command.runInDM,
 	};
 	if (!APICommand) {
 		await client.application!.commands.create(providedCommandData);
