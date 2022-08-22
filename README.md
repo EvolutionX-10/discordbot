@@ -15,22 +15,23 @@ This place can be a good start for you to begin your journey of making a bot in 
 
 ## Features
 
-- Written in [TypeScript](https://www.typescriptlang.org/)
-- Fully ESM based
-- Minimal dependencies
-- Automated Registering/Updating/Deleting/Syncing of Application Commands
-- Default commands
+- Written in [TypeScript](https://www.typescriptlang.org/) 😋
+- Uses [v14.3](https://discord.js.org/) 😎
+- Fully ESM based 😍
+- Minimal dependencies ⚡
+- Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
+- Default commands 😄
   - Chat Input (Slash) Commands [`ping`, `reload`, `eval`, `paginate`]
   - User Commands [`pong`]
   - Message Commands [`save`]
   - Legacy Commands [`say`]
-- Supports Message Commands, Chat Input Commands, ContextMenu Commands, and more!
-- Type safe, simple, and easy to understand
-- Valid and Robust Autocompletions in your IDE for commands and listeners
-- Extended Client with useful features
-- Colorful and detailed logging
-- Paginator Class for easy pagination using embeds, buttons, and select menus!
-- Resolver Class for easy resolving of multi mentions in chat input command option!
+- Supports Message Commands, Chat Input Commands, ContextMenu Commands, and more! 😜
+- Type safe, simple, and easy to understand 👍
+- Valid and Robust Autocompletions in your IDE for commands and listeners 😲
+- Extended Client with useful features 🤩
+- Colorful and detailed logging 💡
+- Paginator Class for easy pagination using embeds, buttons, and select menus! 😉
+- Resolver Class for easy resolving of multi mentions in chat input command option! 😳
 
 ## Before you begin
 

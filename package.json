@@ -1,6 +1,6 @@
 {
 	"name": "discordbot",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"main": "./dist/index.js",
 	"author": {
 		"name": "EvolutionX-10",
@@ -24,7 +24,7 @@
 	"dependencies": {
 		"colorette": "2.0.19",
 		"discord-api-types": "0.37.3",
-		"discord.js": "14.2.0",
+		"discord.js": "14.3.0",
 		"dotenv": "16.0.1"
 	},
 	"devDependencies": {
