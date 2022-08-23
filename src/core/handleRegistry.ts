@@ -74,7 +74,6 @@ async function checkFromClient(client: Client, command: Command) {
 				options: command.options,
 				description: command.description ?? '',
 				defaultMemberPermissions: command.permissions,
-				dmPermission: command.runInDM,
 			};
 			if (!APICommand) {
 				await guild.commands.create(providedCommandData);

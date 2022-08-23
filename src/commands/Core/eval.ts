@@ -18,7 +18,7 @@ export default new Command({
 	],
 	async commandRun(interaction) {
 		const code = interaction.options.getString('code', true);
-		const { client, channel, user, member } = interaction;
+		const { client, channel, user, member, guild } = interaction;
 		await interaction.deferReply();
 
 		let result = await eval(code);

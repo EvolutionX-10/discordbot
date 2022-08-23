@@ -3,7 +3,6 @@ import {
 	ApplicationCommandOptionData,
 	AutocompleteInteraction,
 	ChatInputCommandInteraction,
-	CommandInteraction,
 	Message,
 	MessageContextMenuCommandInteraction,
 	PermissionResolvable,
@@ -16,7 +15,7 @@ export class Command<T extends CommandType = CommandType> {
 	public type: CommandType;
 	public guildIds: string | string[] = [];
 	public options?: ApplicationCommandOptionData[] = [];
-	public permissions?: PermissionResolvable;
+	public permissions?: PermissionResolvable | null;
 	public runInDM?: boolean;
 	public aliases?: string[];
 	public ownerOnly?: boolean;
@@ -38,9 +37,9 @@ export class Command<T extends CommandType = CommandType> {
 			| undefined;
 		this.messageRun = data.messageRun;
 		this.autoCompleteRun = data.autoCompleteRun;
-		this.permissions = data.defaultMemberPermissions ?? 0n;
-		this.runInDM = data.dmPermission ?? undefined;
-		this.ownerOnly = data.ownerOnly ?? undefined;
+		this.permissions = data.defaultMemberPermissions ?? null;
+		this.runInDM = data.dmPermission;
+		this.ownerOnly = data.ownerOnly;
 
 		if (data.type === CommandType.ChatInput) {
 			this.description = (data as ChatInputCommandOptions).description;
@@ -67,11 +66,11 @@ export class Command<T extends CommandType = CommandType> {
 interface BaseCommandOptions<T extends CommandType> {
 	type: T;
 	name?: string;
-	guildIds?: string | string[];
+	guildIds?: string | string[]; // TODO: allow non empty array only
 	aliases?: string[];
 	description?: string;
 	defaultMemberPermissions?: PermissionResolvable;
-	dmPermission?: boolean;
+	dmPermission?: boolean; // TODO: deny if guild Ids provided
 	ownerOnly?: boolean;
 	commandRun?: T extends CommandType.Legacy
 		? never
