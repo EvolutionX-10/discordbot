@@ -21,7 +21,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
 - Default commands 😄
-  - Chat Input (Slash) Commands [`ping`, `reload`, `eval`, `paginate`]
+  - Chat Input (Slash) Commands [`ping`, `eval`, `paginate`]
   - User Commands [`pong`]
   - Message Commands [`save`]
   - Legacy Commands [`say`]

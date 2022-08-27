@@ -18,7 +18,7 @@ export async function initiateCommands(
 	client.logger.info(`Commands Synced in ${diff.toLocaleString()}ms`);
 }
 
-export async function handleRegistry(client: Client, reload: boolean = false) {
+export async function handleRegistry(client: Client) {
 	const commandFolders = readdirSync(`${process.cwd()}\\dist\\commands`);
 	for (const folder of commandFolders) {
 		const commandsFiles = readdirSync(
@@ -26,9 +26,7 @@ export async function handleRegistry(client: Client, reload: boolean = false) {
 		).filter((file) => file.endsWith('.js'));
 
 		for (const file of commandsFiles) {
-			const path = reload
-				? `../commands/${folder}/${file}?update=${Date.now()}`
-				: `../commands/${folder}/${file}`;
+			const path = `../commands/${folder}/${file}`;
 			const { default: command } = (await import(path)) as { default: Command };
 
 			if (!command)
