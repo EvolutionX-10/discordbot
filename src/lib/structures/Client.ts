@@ -1,8 +1,13 @@
-import 'dotenv/config';
-import { Client as DJSClient, GatewayIntentBits, Collection } from 'discord.js';
-import { Command, Listener, Logger } from '#lib/structures';
 import { handleListener, handleRegistry, initiateCommands } from '#core';
 import { LogLevel } from '#lib/enums';
+import { Command, Listener, Logger } from '#lib/structures';
+import {
+	Client as DJSClient,
+	Collection,
+	GatewayIntentBits,
+	Partials,
+} from 'discord.js';
+import 'dotenv/config';
 
 export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 	public constructor() {
@@ -10,8 +15,10 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 			intents: [
 				GatewayIntentBits.Guilds,
 				GatewayIntentBits.GuildMessages,
+				GatewayIntentBits.DirectMessages,
 				GatewayIntentBits.MessageContent,
 			],
+			partials: [Partials.Channel],
 		});
 
 		this.logger.setLevel(LogLevel.Debug);

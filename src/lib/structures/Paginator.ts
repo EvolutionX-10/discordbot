@@ -133,8 +133,6 @@ export class Paginator {
 		});
 
 		collector.on('collect', async (i) => {
-			await i.deferUpdate();
-
 			collector.resetTimer();
 
 			switch (i.customId as ButtonIds) {
@@ -167,7 +165,7 @@ export class Paginator {
 					(this.descriptions ?? this.options.embeds!).length - 1;
 			}
 
-			await i.editReply({
+			await i.update({
 				embeds: [embeds[this.currentCount]],
 				components: i.message.components,
 			});
@@ -176,7 +174,7 @@ export class Paginator {
 		collector.on('ignore', async (i) => {
 			await i.reply({
 				content:
-					this.options.wrongInteractionResponse ?? 'You have been ignored',
+					this.options.wrongInteractionResponse ?? "This maze isn't for you",
 				ephemeral: true,
 			});
 		});

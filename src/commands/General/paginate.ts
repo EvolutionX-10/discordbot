@@ -8,14 +8,14 @@ export default new Command({
 	type: CommandType.ChatInput,
 	description: 'Enjoy Pagination',
 	aliases: ['p'],
-	messageRun(message) {
+	async messageRun(message) {
 		const embeds = strings.map((x) =>
 			new EmbedBuilder().setDescription(x).setColor('Random')
 		);
 		const pagination = new Paginator({ embeds });
 		return pagination.run(message);
 	},
-	commandRun(interaction) {
+	async commandRun(interaction) {
 		const pagination = new Paginator({
 			template,
 			ephemeral: true,

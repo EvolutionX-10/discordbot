@@ -13,7 +13,9 @@ export default new Listener({
 			if (command && command.commandRun) {
 				if (command.ownerOnly && !client.ownerIds.includes(interaction.user.id))
 					return;
-				await command.commandRun(interaction);
+				await command
+					.commandRun(interaction)
+					.catch((e) => client.logger.error(e.stack));
 			}
 		}
 
@@ -26,7 +28,9 @@ export default new Listener({
 
 				if (command.name !== interaction.commandName) return;
 
-				await command.autoCompleteRun(interaction);
+				await command
+					.autoCompleteRun(interaction)
+					.catch((e) => client.logger.error(e.stack));
 			}
 		}
 	},

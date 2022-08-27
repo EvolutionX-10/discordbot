@@ -13,27 +13,27 @@ export class Command<T extends CommandType = CommandType> {
 	private data: CommandOptions<T>;
 	public description?: string;
 	public type: CommandType;
-	public guildIds: string | string[] = [];
+	public guildIds: string[] = [];
 	public options?: ApplicationCommandOptionData[] = [];
 	public permissions?: PermissionResolvable | null;
 	public runInDM?: boolean;
 	public aliases?: string[];
 	public ownerOnly?: boolean;
-	public commandRun?: (interaction: RunType<T>) => Promise<void> | unknown;
+	public commandRun?: (interaction: RunType<T>) => Promise<unknown>;
 	public messageRun?: (
 		message: Message<boolean>,
 		args: string[]
-	) => Promise<void> | unknown;
+	) => Promise<unknown>;
 	public autoCompleteRun?: (
 		interaction: AutocompleteInteraction
-	) => Promise<void> | unknown;
+	) => Promise<unknown>;
 
 	public constructor(data: CommandOptions<T>) {
 		this.data = data;
 		this.type = data.type;
 		this.aliases = data.aliases ?? [];
 		this.commandRun = data.commandRun as
-			| ((interaction: RunType<T>) => Promise<void> | unknown)
+			| ((interaction: RunType<T>) => Promise<unknown>)
 			| undefined;
 		this.messageRun = data.messageRun;
 		this.autoCompleteRun = data.autoCompleteRun;
@@ -44,10 +44,6 @@ export class Command<T extends CommandType = CommandType> {
 		if (data.type === CommandType.ChatInput) {
 			this.description = (data as ChatInputCommandOptions).description;
 			this.options = (data as ChatInputCommandOptions).options;
-		}
-
-		if (typeof this.data.guildIds === 'string') {
-			this.data.guildIds = [this.data.guildIds];
 		}
 
 		this.guildIds = this.data.guildIds ?? []; // Keep it empty for global commands
@@ -66,21 +62,16 @@ export class Command<T extends CommandType = CommandType> {
 interface BaseCommandOptions<T extends CommandType> {
 	type: T;
 	name?: string;
-	guildIds?: string | string[]; // TODO: allow non empty array only
 	aliases?: string[];
 	description?: string;
 	defaultMemberPermissions?: PermissionResolvable;
-	dmPermission?: boolean; // TODO: deny if guild Ids provided
 	ownerOnly?: boolean;
 	commandRun?: T extends CommandType.Legacy
 		? never
-		: (interaction: RunType<T>) => Promise<void> | unknown;
-	messageRun?: (
-		message: Message<boolean>,
-		args: string[]
-	) => Promise<void> | unknown;
+		: (interaction: RunType<T>) => Promise<unknown>;
+	messageRun?: (message: Message<boolean>, args: string[]) => Promise<unknown>;
 	autoCompleteRun?: T extends CommandType.ChatInput
-		? (interaction: AutocompleteInteraction) => Promise<void> | unknown
+		? (interaction: AutocompleteInteraction) => Promise<unknown>
 		: never;
 }
 
@@ -91,11 +82,25 @@ interface ChatInputCommandOptions
 	type: CommandType.ChatInput;
 }
 
+interface GlobalCommand {
+	dmPermission?: false;
+	guildIds?: never;
+}
+
+interface GuildCommand {
+	dmPermission?: never;
+	guildIds?: NonEmptyArray;
+}
+
 type CommandOptions<T extends CommandType> = T extends CommandType.ChatInput
-	? ChatInputCommandOptions
+	? ChatInputCommandOptions & BaseCommand
 	: T extends CommandType.Legacy
-	? BaseCommandOptions<T> & Required<Pick<BaseCommandOptions<T>, 'messageRun'>>
-	: BaseCommandOptions<T> & Required<Pick<BaseCommandOptions<T>, 'commandRun'>>;
+	? BaseCommandOptions<T> &
+			Required<Pick<BaseCommandOptions<T>, 'messageRun'>> &
+			BaseCommand
+	: BaseCommandOptions<T> &
+			Required<Pick<BaseCommandOptions<T>, 'commandRun'>> &
+			BaseCommand;
 
 type RunType<T extends CommandType> = T extends CommandType.ChatInput
 	? ChatInputCommandInteraction
@@ -104,3 +109,7 @@ type RunType<T extends CommandType> = T extends CommandType.ChatInput
 	: T extends CommandType.User
 	? UserContextMenuCommandInteraction
 	: never;
+
+type BaseCommand = GuildCommand | GlobalCommand;
+
+type NonEmptyArray<T extends `${number}` = `${number}`> = [T, ...T[]];

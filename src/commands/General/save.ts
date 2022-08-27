@@ -5,7 +5,7 @@ export default new Command({
 	type: CommandType.Message,
 	description: 'DMs you the message',
 	dmPermission: false,
-	commandRun(interaction) {
+	async commandRun(interaction) {
 		const msg = interaction.options.getMessage('message');
 		if (!msg) return;
 		if (!msg.content) return interaction.reply({ content: 'No message content found', ephemeral: true });

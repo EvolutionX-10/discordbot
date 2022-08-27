@@ -14,13 +14,13 @@ export default new Command({
 			required: false,
 		},
 	],
-	commandRun(interaction) {
-		interaction.reply({ content: 'Pong!', ephemeral: true });
+	async commandRun(interaction) {
+		return interaction.reply({ content: 'Pong!', ephemeral: true });
 	},
-	messageRun(message) {
-		message.channel.send('Pong!');
+	async messageRun(message) {
+		return message.channel.send('Pong!');
 	},
-	autoCompleteRun(interaction) {
+	async autoCompleteRun(interaction) {
 		const focus = interaction.options.getFocused();
 		const choices = ['pong', 'ping'];
 		const filtered = choices.filter((choice) => choice.startsWith(focus));

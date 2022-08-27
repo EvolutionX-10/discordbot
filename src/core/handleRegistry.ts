@@ -100,7 +100,7 @@ async function checkFromClient(client: Client, command: Command) {
 		options: command.options,
 		description: command.description ?? '',
 		defaultMemberPermissions: command.permissions,
-		dmPermission: command.runInDM,
+		dmPermission: command.runInDM ?? true,
 	};
 	if (!APICommand) {
 		await client.application!.commands.create(providedCommandData);

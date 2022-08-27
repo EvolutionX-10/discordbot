@@ -83,10 +83,10 @@ import { Command } from '#lib/structures';
 export default new Command({
 	type: CommandType.ChatInput,
 	description: 'Ping Pong!!',
-	commandRun(interaction) {
+	async commandRun(interaction) {
 		return interaction.reply({ content: 'Pong!', ephemeral: true });
 	},
-	messageRun(message) {
+	async messageRun(message) {
 		return message.channel.send('Pong!');
 	},
 });
