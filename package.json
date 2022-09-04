@@ -11,8 +11,8 @@
 	"type": "module",
 	"imports": {
 		"#lib/*": "./dist/lib/*/index.js",
-		"#root": "./dist/index.js",
-		"#core": "./dist/core/index.js"
+		"#core": "./dist/core/index.js",
+		"#root/*": "./dist/*.js"
 	},
 	"scripts": {
 		"dev": "yarn build && node .",
