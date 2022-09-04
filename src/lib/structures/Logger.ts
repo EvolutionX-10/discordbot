@@ -1,12 +1,12 @@
-import {
-	cyanBright,
-	Color,
-	yellowBright,
-	redBright,
-	magentaBright,
-	gray,
-} from 'colorette';
 import { LogLevel } from '#lib/enums';
+import {
+	Color,
+	cyanBright,
+	gray,
+	magentaBright,
+	redBright,
+	yellowBright,
+} from 'colorette';
 
 export class Logger {
 	public setLevel(level: LogLevel): void {
@@ -23,7 +23,12 @@ export class Logger {
 		...args: unknown[]
 	): void {
 		if (level > this.level) return;
-		console.log(`[${color(type)}] - ${message}`, ...args);
+		console.log(
+			`[${color(
+				type.padStart(type.length + (7 - type.length) / 2).padEnd(7)
+			)}] - ${message}`,
+			...args
+		);
 	}
 	public info(message: string, ...args: unknown[]): void {
 		this.log(LogLevel.Info, 'INFO', cyanBright, message, ...args);
