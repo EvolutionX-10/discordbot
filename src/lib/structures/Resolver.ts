@@ -1,3 +1,4 @@
+import type { Snowflake } from 'discord-api-types/v10';
 import {
 	Collection,
 	CommandInteraction,
@@ -6,7 +7,6 @@ import {
 	Role,
 	User,
 } from 'discord.js';
-import type { Snowflake } from 'discord-api-types/v10';
 
 /**
  * It resolves mentions from the content of a command
@@ -91,17 +91,19 @@ export class Resolver {
 	 * Resolves a url from the content.
 	 * @returns The resolved url.
 	 */
-	public get url() {
-		const regex =
-			/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/gi;
-		return this.content.match(regex)?.[0];
+	public get url(): Readonly<URL> | null {
+		try {
+			return new URL(this.content);
+		} catch {
+			return null;
+		}
 	}
 
 	/**
 	 * Resolves a date from the content.
 	 * @returns The resolved date.
 	 */
-	public get date() {
+	public get date(): Readonly<Date> | null {
 		try {
 			return new Date(this.content);
 		} catch {
