@@ -34,7 +34,7 @@ export async function handleRegistry(client: Client) {
 					`There is no exported Command Class in ${file}!\nPath: ${process.cwd()}\\dist\\commands\\${folder}\\${file}`
 				);
 
-			command.name = file.slice(0, -3);
+			command.name = file.split('.')[0];
 
 			client.commands.set(command.name, command);
 		}
