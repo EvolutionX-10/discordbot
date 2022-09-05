@@ -2,7 +2,6 @@ import { Message, User } from 'discord.js';
 
 export class Prompt {
 	public constructor(public readonly options: PromptOptions) {
-		this.options.questions = this.options.questions.filter((q) => !!q.length);
 		if (this.options.questions.length === 0)
 			throw new Error('No valid questions to prompt!');
 
@@ -17,12 +16,12 @@ export class Prompt {
 		}
 
 		user ??= message.author;
-
-		await message.channel.send(questions.shift()!);
+		const q = questions.shift();
+		await message.channel.send(typeof q === 'string' ? q : q!.question);
 
 		const collector = message.channel.createMessageCollector({
 			filter: (m) => m.author.id === user!.id,
-			time,
+			time: typeof q !== 'string' ? q!.time : time,
 		});
 
 		const answers: string[] = [];
@@ -32,9 +31,11 @@ export class Prompt {
 				answers.push(m.content);
 				const next = questions.shift();
 				next
-					? await m.channel.send(next)
+					? await m.channel.send(typeof next === 'string' ? next : next.question)
 					: collector.stop('Collected All Answers');
-				collector.resetTimer();
+				collector.resetTimer({
+					time: typeof next !== 'string' ? next?.time : undefined
+				});
 			});
 
 			collector.on('end', async (c) => {
@@ -48,7 +49,12 @@ export class Prompt {
 }
 
 interface PromptOptions {
-	questions: string[];
+	questions: string[] | Question[];
 	message: Message;
 	time?: number;
+}
+
+interface Question {
+	question: string;
+	time: number;
 }
