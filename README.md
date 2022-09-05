@@ -21,10 +21,10 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
 - Default commands 😄
-  - Chat Input (Slash) Commands [`ping`, `eval`, `paginate`]
+  - Chat Input (Slash) Commands [`ping`, `eval`, `paginate`, `survey`]
   - User Commands [`pong`]
   - Message Commands [`save`]
-  - Legacy Commands [`say`]
+  - Legacy Commands [`say`, `paginate`, `survey`]
 - Supports Message Commands, Chat Input Commands, ContextMenu Commands, and more! 😜
 - Type safe, simple, and easy to understand 👍
 - Valid and Robust Autocompletions in your IDE for commands and listeners 😲
@@ -32,6 +32,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 - Colorful and detailed logging 💡
 - Paginator Class for easy pagination using embeds, buttons, and select menus! 😉
 - Resolver Class for easy resolving of multi mentions in chat input command option! 😳
+- Prompt Class if you want to ask series of questions and have message content intent 🤗
 
 ## Before you begin
 
