@@ -24,13 +24,12 @@ export class Paginator {
 	>;
 	private descriptions?: string[];
 	public constructor(private readonly options: PaginatorOptions = {}) {
-		if (!this.options.emojis) this.options.emojis = ['⏮', '◀', '⏹', '▶', '⏭'];
-		if (this.options.embeds)
-			this.options.embeds = this.options.embeds.map((embed, i) =>
-				new EmbedBuilder(embed.data).setFooter({
-					text: `Page ${i + 1}/${this.options.embeds!.length}`,
-				})
-			);
+		this.options.emojis ??= ['⏮', '◀', '⏹', '▶', '⏭'];
+		this.options.embeds &&= this.options.embeds.map((embed, i) =>
+			new EmbedBuilder(embed.data).setFooter({
+				text: `Page ${i + 1}/${this.options.embeds!.length}`,
+			})
+		);
 	}
 
 	public setEmbeds(embeds: EmbedBuilder[]): this {
@@ -112,12 +111,12 @@ export class Paginator {
 		let msg: Message<boolean>;
 		if (interaction.replied) {
 			msg = await interaction.editReply({
-				embeds: [embeds![this.currentCount]],
+				embeds: [embeds[this.currentCount]],
 				components: rows,
 			});
 		} else
 			msg = await interaction.reply({
-				embeds: [embeds![this.currentCount]],
+				embeds: [embeds[this.currentCount]],
 				components: rows,
 				fetchReply: true,
 				ephemeral: Boolean(this.options.ephemeral),
