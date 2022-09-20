@@ -2,10 +2,10 @@ import { Client, Listener } from '#lib/structures';
 import { readdirSync } from 'fs';
 
 export async function handleListener(client: Client) {
-	const listenerFolders = readdirSync(`${process.cwd()}\\dist\\listeners`);
+	const listenerFolders = readdirSync(`${process.cwd()}/dist/listeners`);
 	for (const folder of listenerFolders) {
 		const listenerFiles = readdirSync(
-			`${process.cwd()}\\dist\\listeners\\${folder}`
+			`${process.cwd()}/dist/listeners/${folder}`
 		).filter((file) => file.endsWith('.js'));
 
 		for (const file of listenerFiles) {

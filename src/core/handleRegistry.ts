@@ -19,10 +19,10 @@ export async function initiateCommands(
 }
 
 export async function handleRegistry(client: Client) {
-	const commandFolders = readdirSync(`${process.cwd()}\\dist\\commands`);
+	const commandFolders = readdirSync(`${process.cwd()}/dist/commands`);
 	for (const folder of commandFolders) {
 		const commandsFiles = readdirSync(
-			`${process.cwd()}\\dist\\commands\\${folder}`
+			`${process.cwd()}/dist/commands/${folder}`
 		).filter((file) => file.endsWith('.js'));
 
 		for (const file of commandsFiles) {
