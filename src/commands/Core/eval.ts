@@ -7,7 +7,7 @@ export default new Command({
 	type: CommandType.ChatInput,
 	description: 'Eval Some Code',
 	ownerOnly: true,
-	guildIds: ['991194621763919971'],
+	guildIds: ['991194621763919971'], // ! Replace it with your test server id
 	options: [
 		{
 			name: 'code',

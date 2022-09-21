@@ -31,7 +31,7 @@ export async function handleRegistry(client: Client) {
 
 			if (!command)
 				throw new Error(
-					`There is no exported Command Class in ${file}!\nPath: ${process.cwd()}\\dist\\commands\\${folder}\\${file}`
+					`There is no default exported Command Class in ${file}!\nPath: ${process.cwd()}/dist/commands/${folder}/${file}`
 				);
 
 			command.name = file.split('.')[0];
@@ -60,7 +60,7 @@ async function checkFromClient(client: Client, command: Command) {
 		for (const guildId of command.guildIds) {
 			const guild = await client.guilds.fetch(guildId).catch(() => null);
 
-			if (!guild) throw new Error('Invalid Guild!');
+			if (!guild) throw new Error(`Invalid Guild Id in ${command.name}.ts!`);
 
 			const APICommand = (await guild.commands.fetch()).find(
 				(cmd) => cmd.name === command.name
