@@ -30,8 +30,8 @@ export default new Command({
 	},
 });
 
-async function prompt(message: Message) {
-	await new Prompt({ message, questions }).run().then((answers) => {
+function prompt(message: Message) {
+	new Prompt({ message, questions }).run().then((answers) => {
 		if (!answers.length) return;
 
 		return message.reply({

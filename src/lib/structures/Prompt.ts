@@ -16,7 +16,7 @@ export class Prompt {
 		}
 
 		user ??= message.author;
-		const q = questions.shift();
+		const [q, ...rest] = questions;
 		await message.channel.send(typeof q === 'string' ? q : q!.question);
 
 		const collector = message.channel.createMessageCollector({
@@ -29,12 +29,14 @@ export class Prompt {
 		return new Promise<string[]>((resolve, reject) => {
 			collector.on('collect', async (m) => {
 				answers.push(m.content);
-				const next = questions.shift();
+				const next = rest.shift();
 				next
-					? await m.channel.send(typeof next === 'string' ? next : next.question)
+					? await m.channel.send(
+							typeof next === 'string' ? next : next.question
+					  )
 					: collector.stop('Collected All Answers');
 				collector.resetTimer({
-					time: typeof next !== 'string' ? next?.time : undefined
+					time: typeof next !== 'string' ? next?.time : undefined,
 				});
 			});
 

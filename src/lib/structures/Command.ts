@@ -19,7 +19,7 @@ export class Command<T extends CommandType = CommandType> {
 	public runInDM?: boolean;
 	public aliases?: string[];
 	public ownerOnly?: boolean;
-	public commandRun?: (interaction: RunType<T>) => Promise<unknown>;
+	public commandRun?: (interaction: RunType[T]) => Promise<unknown>;
 	public messageRun?: (
 		message: Message<boolean>,
 		args: string[]
@@ -33,7 +33,7 @@ export class Command<T extends CommandType = CommandType> {
 		this.type = data.type;
 		this.aliases = data.aliases ?? [];
 		this.commandRun = data.commandRun as
-			| ((interaction: RunType<T>) => Promise<unknown>)
+			| ((interaction: RunType[T]) => Promise<unknown>)
 			| undefined;
 		this.messageRun = data.messageRun;
 		this.autoCompleteRun = data.autoCompleteRun;
@@ -66,9 +66,7 @@ interface BaseCommandOptions<T extends CommandType> {
 	description?: string;
 	defaultMemberPermissions?: PermissionResolvable;
 	ownerOnly?: boolean;
-	commandRun?: T extends CommandType.Legacy
-		? never
-		: (interaction: RunType<T>) => Promise<unknown>;
+	commandRun?: (interaction: RunType[T]) => Promise<unknown>;
 	messageRun?: (message: Message<boolean>, args: string[]) => Promise<unknown>;
 	autoCompleteRun?: T extends CommandType.ChatInput
 		? (interaction: AutocompleteInteraction) => Promise<unknown>
@@ -102,14 +100,13 @@ type CommandOptions<T extends CommandType> = T extends CommandType.ChatInput
 			Required<Pick<BaseCommandOptions<T>, 'commandRun'>> &
 			BaseCommand;
 
-type RunType<T extends CommandType> = T extends CommandType.ChatInput
-	? ChatInputCommandInteraction
-	: T extends CommandType.Message
-	? MessageContextMenuCommandInteraction
-	: T extends CommandType.User
-	? UserContextMenuCommandInteraction
-	: never;
-
 type BaseCommand = GuildCommand | GlobalCommand;
 
 type NonEmptyArray<T extends `${number}` = `${number}`> = [T, ...T[]];
+
+interface RunType {
+	[CommandType.ChatInput]: ChatInputCommandInteraction;
+	[CommandType.Message]: MessageContextMenuCommandInteraction;
+	[CommandType.User]: UserContextMenuCommandInteraction;
+	[CommandType.Legacy]: never;
+}
