@@ -23,26 +23,29 @@ export class Logger {
 		...args: unknown[]
 	): void {
 		if (level > this.level) return;
-		console.log(
+		console[type](
 			`[${color(
-				type.padStart(type.length + (7 - type.length) / 2).padEnd(7)
+				type
+					.toUpperCase()
+					.padStart(type.length + (7 - type.length) / 2)
+					.padEnd(7)
 			)}] - ${message}`,
 			...args
 		);
 	}
 	public info(message: string, ...args: unknown[]): void {
-		this.log(LogLevel.Info, 'INFO', cyanBright, message, ...args);
+		this.log(LogLevel.Info, 'info', cyanBright, message, ...args);
 	}
 	public warn(message: string, ...args: unknown[]): void {
-		this.log(LogLevel.Warn, 'WARN', yellowBright, message, ...args);
+		this.log(LogLevel.Warn, 'warn', yellowBright, message, ...args);
 	}
 	public error(message: string, ...args: unknown[]): void {
-		this.log(LogLevel.Error, 'ERROR', redBright, message, ...args);
+		this.log(LogLevel.Error, 'error', redBright, message, ...args);
 	}
 	public debug(message: string, ...args: unknown[]): void {
-		this.log(LogLevel.Debug, 'DEBUG', magentaBright, gray(message), ...args);
+		this.log(LogLevel.Debug, 'debug', magentaBright, gray(message), ...args);
 	}
 	private level: LogLevel = LogLevel.Info;
 }
 
-type LogLevelString = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
+type LogLevelString = 'info' | 'warn' | 'error' | 'debug';
