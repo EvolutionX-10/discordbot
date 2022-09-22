@@ -33,6 +33,8 @@ export default new Listener({
 
 		if (!(command.runInDM ?? true)) return;
 
-		await command.messageRun(message, args).catch((e) => message.client.logger.error(e.stack));
+		await command
+			.messageRun(message, args)
+			.catch((e) => message.client.logger.error(e.stack));
 	},
 });

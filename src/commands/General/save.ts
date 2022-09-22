@@ -8,7 +8,11 @@ export default new Command({
 	async commandRun(interaction) {
 		const msg = interaction.options.getMessage('message');
 		if (!msg) return;
-		if (!msg.content) return interaction.reply({ content: 'No message content found', ephemeral: true });
+		if (!msg.content)
+			return interaction.reply({
+				content: 'No message content found',
+				ephemeral: true,
+			});
 		return interaction.user
 			.send({ content: msg.content })
 			.then(() => interaction.reply({ content: 'DM sent!', ephemeral: true }))
