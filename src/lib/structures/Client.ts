@@ -8,6 +8,7 @@ import {
 	Partials,
 } from 'discord.js';
 import 'dotenv/config';
+import { cyanBright, underline } from 'colorette';
 
 export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 	public constructor() {
@@ -40,8 +41,15 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 		handleRegistry(this);
 		handleListener(this);
 		const promiseString = await super.login(token);
-		this.logger.info(`Logged in as ${this.user?.tag}`);
-		await initiateCommands(this, true, true);
+		console.clear();
+		this.logger.info(
+			`Logged in as ${cyanBright(underline(`${this.user?.tag}`))}`
+		);
+		await initiateCommands(this, {
+			register: false, //! For detailed Registry
+			sync: false, //! For syncing commands with local commands
+			shortcut: true, //! Faster method, uses Routes (https://discordjs.guide/interactions/slash-commands.html#registering-slash-commands)
+		});
 		return promiseString;
 	}
 }

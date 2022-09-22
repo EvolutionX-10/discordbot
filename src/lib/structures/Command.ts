@@ -1,4 +1,5 @@
 import { CommandType } from '#lib/enums';
+import { AddUndefinedToPossiblyUndefinedPropertiesOfInterface } from 'discord-api-types/utils/internals';
 import {
 	ApplicationCommandOptionData,
 	AutocompleteInteraction,
@@ -7,6 +8,9 @@ import {
 	MessageContextMenuCommandInteraction,
 	PermissionResolvable,
 	UserContextMenuCommandInteraction,
+	RESTPostAPIChatInputApplicationCommandsJSONBody,
+	APIApplicationCommandOption,
+	ApplicationCommandType,
 } from 'discord.js';
 
 export class Command<T extends CommandType = CommandType> {
@@ -56,6 +60,23 @@ export class Command<T extends CommandType = CommandType> {
 	public get name(): string {
 		if (!this.data.name) throw new Error('Command name is not set');
 		return this.data.name;
+	}
+
+	public buildAPIApplicationCommand(): RESTPostAPIChatInputApplicationCommandsJSONBody {
+		return {
+			name: this.data.name!,
+			description: this.description ?? '',
+			default_member_permissions: this.permissions?.toString(),
+			dm_permission: this.runInDM,
+			options: this
+				.options as AddUndefinedToPossiblyUndefinedPropertiesOfInterface<
+				APIApplicationCommandOption[]
+			>,
+			type: this
+				.type as unknown as AddUndefinedToPossiblyUndefinedPropertiesOfInterface<
+				ApplicationCommandType.ChatInput | undefined
+			>,
+		};
 	}
 }
 

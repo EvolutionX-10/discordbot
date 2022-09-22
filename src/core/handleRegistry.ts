@@ -1,21 +1,29 @@
 import { CommandType } from '#lib/enums';
 import { Client, Command } from '#lib/structures';
-import { ApplicationCommandData, ApplicationCommandType } from 'discord.js';
+import {
+	ApplicationCommandData,
+	ApplicationCommandType,
+	REST,
+	Routes,
+} from 'discord.js';
 import { readdirSync } from 'fs';
+import { greenBright } from 'colorette';
 
 export async function initiateCommands(
 	client: Client,
-	register: boolean = false,
-	sync: boolean = false
+	registryOptions: RegistryOptions
 ) {
 	client.logger.info(`Syncing Commands...`);
 	const now = Date.now();
 	await Promise.all([
-		register && registerCommands(client),
-		sync && syncCommands(client),
+		registryOptions.shortcut && registerViaRoutes(client),
+		registryOptions.register && registerCommands(client),
+		registryOptions.sync && syncCommands(client),
 	]);
 	const diff = Date.now() - now;
-	client.logger.info(`Commands Synced in ${diff.toLocaleString()}ms`);
+	client.logger.info(
+		`Commands Synced in ${greenBright(`${diff.toLocaleString()}ms`)}!`
+	);
 }
 
 export async function handleRegistry(client: Client) {
@@ -41,11 +49,61 @@ export async function handleRegistry(client: Client) {
 	}
 }
 
-async function registerCommands(client: Client) {
-	const commandsWithChatInputRun = client.commands
+function registerViaRoutes(client: Client) {
+	const rest = new REST({ version: '10' }).setToken(client.token!);
+	const guildCommands = client.commands.filter(
+		(c) => Boolean(c.commandRun) && Boolean(c.guildIds.length)
+	);
+	const globalCommands = client.commands.filter(
+		(c) => Boolean(c.commandRun) && !c.guildIds.length
+	);
+
+	if (globalCommands.size) {
+		client.logger.debug(
+			`Started refreshing ${globalCommands.size} application (/) commands.`
+		);
+		rest.put(Routes.applicationCommands(client.user!.id), {
+			body: globalCommands.map((g) => g.buildAPIApplicationCommand()),
+		});
+		client.logger.debug(
+			`Successfully reloaded ${globalCommands.size} application (/) commands.`
+		);
+	}
+	if (guildCommands.size) {
+		const mapOfGuildIds = [
+			...new Set(guildCommands.map((c) => c.guildIds).flat()),
+		];
+
+		if (mapOfGuildIds.length > 1) {
+			client.logger.warn(
+				'Using Routes (faster) method, only first guild id will be considered!'
+			);
+			client.logger.warn('Please use detailed registry for multiple guilds');
+		}
+
+		client.logger.debug(
+			`Started refreshing ${globalCommands.size} application (/) guild commands.`
+		);
+		rest.put(
+			Routes.applicationGuildCommands(
+				client.user!.id,
+				guildCommands.first()!.guildIds[0]
+			),
+			{
+				body: guildCommands.map((g) => g.buildAPIApplicationCommand()),
+			}
+		);
+		client.logger.debug(
+			`Successfully reloaded ${guildCommands.size} application (/) guild commands.`
+		);
+	}
+}
+
+function registerCommands(client: Client) {
+	const applicationCommands = client.commands
 		.filter((c) => Boolean(c.commandRun) && c.type !== CommandType.Legacy)
 		.values();
-	for (const command of commandsWithChatInputRun) {
+	for (const command of applicationCommands) {
 		checkFromClient(client, command);
 	}
 }
@@ -180,4 +238,10 @@ async function syncCommands(client: Client) {
 			APIGuildCommands.find((cmd) => cmd.name === command)?.delete();
 		}
 	}
+}
+
+interface RegistryOptions {
+	sync?: boolean;
+	register?: boolean;
+	shortcut?: boolean;
 }
