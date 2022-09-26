@@ -16,7 +16,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 ## Features
 
 - Written in [TypeScript](https://www.typescriptlang.org/) 😋
-- Uses [v14.4](https://discord.js.org/) 😎
+- Uses [v14.5](https://discord.js.org/) 😎
 - Fully ESM based 😍
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
@@ -40,7 +40,7 @@ This guide assumes you have solid understanding of JavaScript and at least basic
 
 ## Getting Started
 
-Click on [`Use this template`](https://github.com/EvolutionX-10/discordbot/generate) button and it will generate a new repository based on this repository in your account. Once done, you may clone your repository locally using git[^git]. <br>
+Click on [`Use this template`](https://github.com/EvolutionX-10/discordbot/generate) button and it will generate a new repository based on this repository in your account. Once done, you may clone your repository locally using git[^git]. <br />
 You also need to have a Discord Bot application created. If you haven't done it yet, you can do it by following the guide [here](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
 ## Installation
@@ -73,7 +73,8 @@ yarn start
 
 Note: You need to have node version `16.9` or higher!
 
-## Commands
+<details>
+<summary>Commands</summary>
 
 #### Example
 
@@ -93,7 +94,11 @@ export default new Command({
 });
 ```
 
-## Listeners
+</details>
+
+<details>
+
+<summary>Listeners</summary>
 
 #### Example
 
@@ -108,6 +113,8 @@ export default new Listener({
 	},
 });
 ```
+
+</details>
 
 ## Contributing
 
