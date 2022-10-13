@@ -1,16 +1,17 @@
 import {
+	ActionRow,
 	ActionRowBuilder,
+	APISelectMenuComponent,
 	APISelectMenuOption,
 	ButtonBuilder,
 	ButtonStyle,
 	CommandInteraction,
-	ComponentType,
 	EmbedBuilder,
 	Message,
+	MessageActionRowComponent,
 	RestOrArray,
 	SelectMenuBuilder,
 	SelectMenuComponentOptionData,
-	SelectMenuInteraction,
 	SelectMenuOptionBuilder,
 	User,
 } from 'discord.js';
@@ -23,6 +24,11 @@ export class Paginator {
 		| SelectMenuComponentOptionData
 	>;
 	private descriptions?: string[];
+
+	public get pages() {
+		return (this.options.embeds?.length ?? this.descriptions?.length)!;
+	}
+
 	public constructor(private readonly options: PaginatorOptions = {}) {
 		this.options.emojis ??= ['⏮', '◀', '⏹', '▶', '⏭'];
 		this.options.embeds &&= this.options.embeds.map((embed, i) =>
@@ -30,6 +36,8 @@ export class Paginator {
 				text: `Page ${i + 1}/${this.options.embeds!.length}`,
 			})
 		);
+
+		if (this.pages > 25) this.options.includeSelectMenu = false;
 	}
 
 	public setEmbeds(embeds: EmbedBuilder[]): this {
@@ -63,10 +71,19 @@ export class Paginator {
 		user?: User
 	) {
 		this.sanityChecks();
+
+		const target = user
+			? user
+			: messageOrInteraction instanceof Message
+			? messageOrInteraction.author
+			: messageOrInteraction.user;
+
 		const embeds = this.options.embeds ?? this.buildEmbeds()!;
+
 		const rows = Boolean(this.buildSelect())
 			? [this.buildButtons(), this.buildSelect()!]
 			: [this.buildButtons()];
+
 		if (messageOrInteraction instanceof Message) {
 			const message = await this.handleMessage(
 				messageOrInteraction,
@@ -74,14 +91,14 @@ export class Paginator {
 				rows
 			);
 
-			return this.handleCollector(message, user ?? messageOrInteraction.author);
-		} else if (messageOrInteraction instanceof CommandInteraction) {
+			return this.handleCollector(message, target);
+		} else {
 			const message = await this.handleInteraction(
 				messageOrInteraction,
 				embeds,
 				rows
 			);
-			return this.handleCollector(message, user ?? messageOrInteraction.user);
+			return this.handleCollector(message, target);
 		}
 	}
 
@@ -109,7 +126,7 @@ export class Paginator {
 		)[]
 	) {
 		let msg: Message<boolean>;
-		if (interaction.replied) {
+		if (interaction.replied || interaction.deferred) {
 			msg = await interaction.editReply({
 				embeds: [embeds[this.currentCount]],
 				components: rows,
@@ -143,74 +160,75 @@ export class Paginator {
 					break;
 				case '@paginator/stop':
 					i.message.components = [];
-					collector.stop();
 					break;
 				case '@paginator/forward':
 					this.currentCount++;
 					break;
 				case '@paginator/last':
-					this.currentCount =
-						(this.descriptions ?? this.options.embeds!).length - 1;
+					this.currentCount = this.pages - 1;
 					break;
 				default:
-					this.currentCount = parseInt((i as SelectMenuInteraction).values[0]);
+					if (!i.isSelectMenu()) return;
+					this.currentCount = parseInt(i.values[0]);
 			}
 
 			if (this.currentCount < 0) this.currentCount = 0;
-			if (
-				this.currentCount >= (this.descriptions ?? this.options.embeds!).length
-			) {
-				this.currentCount =
-					(this.descriptions ?? this.options.embeds!).length - 1;
-			}
+			if (this.currentCount >= this.pages) this.currentCount = this.pages - 1;
 
 			await i.update({
 				embeds: [embeds[this.currentCount]],
-				components: i.message.components,
+				components: i.message.components.length
+					? this.buildSelect()
+						? [this.buildButtons(), this.updateSelect(i.message.components)[1]]
+						: [this.buildButtons()]
+					: [],
 			});
+
+			if (i.message.components.length === 0) collector.stop();
 		});
 
 		collector.on('ignore', async (i) => {
+			if (!this.options.wrongInteractionResponse) {
+				const embeds = this.options.embeds ?? this.buildEmbeds()!;
+				const components = Boolean(this.buildSelect())
+					? [this.buildButtons(), this.buildSelect()!]
+					: [this.buildButtons()];
+
+				const msg = await i.reply({
+					embeds: [embeds[this.currentCount]],
+					components,
+					ephemeral: true,
+					fetchReply: true,
+				});
+
+				return this.handleCollector(msg, i.user);
+			}
 			await i.reply({
-				content:
-					this.options.wrongInteractionResponse ?? "This maze isn't for you",
+				content: this.options.wrongInteractionResponse,
 				ephemeral: true,
 			});
 		});
 
 		collector.on('end', async () => {
-			if (message.components.length !== 0) {
-				const components = message.components.map((c) =>
-					new ActionRowBuilder<
-						SelectMenuBuilder | ButtonBuilder
-					>().setComponents(
-						c.components.map((c) => {
-							if (c.type === ComponentType.Button) {
-								return new ButtonBuilder(c.data).setDisabled();
-							} else return new SelectMenuBuilder(c.data).setDisabled();
-						})
-					)
-				);
-
-				await message
-					.edit({
-						embeds: message.embeds,
-						components,
-					})
-					.catch(() => null);
-			}
+			await message.edit({ components: [] }).catch(() => null);
 		});
 	}
 
 	private buildButtons() {
 		const embeds = (this.options.embeds ?? this.descriptions)!;
 		const buttons = [];
+		const first = 0;
+		const last = this.pages - 1;
 		const ids = ['first', 'back', 'stop', 'forward', 'last'];
 		for (let i = 0; i < 5; i++) {
 			const button = new ButtonBuilder()
 				.setCustomId(`@paginator/${ids[i]}`)
 				.setEmoji(this.options.emojis![i])
-				.setDisabled(embeds.length === 1)
+				.setDisabled(
+					embeds.length === 1 ||
+						((i === 0 || i === 1) && first === this.currentCount) ||
+						((i === 3 || i === 4) && last === this.currentCount)
+				)
 				.setStyle(ButtonStyle.Secondary);
 			buttons.push(button);
 		}
@@ -219,21 +237,21 @@ export class Paginator {
 	}
 
 	private buildSelect() {
-		const pages = (this.options.embeds?.length ?? this.descriptions?.length)!;
 		if (this.options.includeSelectMenu === false) return;
 		const select = new SelectMenuBuilder()
 			.setCustomId('@paginator/select')
 			.setMaxValues(1)
 			.setMinValues(1)
-			.setDisabled(pages === 1)
+			.setDisabled(this.pages === 1)
 			.setPlaceholder(`Navigate to page`)
 			.setOptions(
 				...(this.selectMenuOptions ??
-					Array(pages)
+					Array(this.pages)
 						.fill(null)
 						.map((_, i) => ({
 							label: `Page ${i + 1}`,
 							value: `${i}`,
+							default: i === this.currentCount,
 						})))
 			);
 		const row = new ActionRowBuilder<SelectMenuBuilder>().setComponents(select);
@@ -244,7 +262,7 @@ export class Paginator {
 		if (!this.descriptions) return;
 		const defaultEmbed = new EmbedBuilder();
 		const template = this.options.template ?? defaultEmbed;
-		const embeds = Array(this.descriptions.length)
+		const embeds = Array(this.pages)
 			.fill(null)
 			.map((_, i) => {
 				const embed = new EmbedBuilder(template.data);
@@ -256,6 +274,17 @@ export class Paginator {
 				return embed;
 			});
 		return embeds;
+	}
+
+	private updateSelect(components: ActionRow<MessageActionRowComponent>[]) {
+		const selectMenuOption = (
+			components[1].components[0].data as APISelectMenuComponent
+		).options;
+		for (const option of selectMenuOption) {
+			if (option.value === `${this.currentCount}`) option.default = true;
+			else option.default = false;
+		}
+		return components;
 	}
 
 	private sanityChecks() {
@@ -274,10 +303,7 @@ export class Paginator {
 		if (this.options.template && !this.descriptions?.length) {
 			throw new Error('No descriptions provided');
 		}
-		if (
-			this.options.includeSelectMenu &&
-			(this.options.embeds?.length! > 25 || this.descriptions?.length! > 25)
-		) {
+		if (this.options.includeSelectMenu && this.pages > 25) {
 			throw new Error('Too many pages to include select menu');
 		}
 	}
