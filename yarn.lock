@@ -467,14 +467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"discord-api-types@npm:0.37.25":
-  version: 0.37.25
-  resolution: "discord-api-types@npm:0.37.25"
-  checksum: 92cc48421f475cb9a3b840f5375e4272d388c52f73536e7943224dfbb718fe43bfaef2873f506a614f769897b969d07810943f3ca1805bbb02d85c7cc0ba8ea5
-  languageName: node
-  linkType: hard
-
-"discord-api-types@npm:^0.37.20, discord-api-types@npm:^0.37.23":
+"discord-api-types@npm:0.37.26, discord-api-types@npm:^0.37.20, discord-api-types@npm:^0.37.23":
   version: 0.37.26
   resolution: "discord-api-types@npm:0.37.26"
   checksum: 66a1e43568af6d928aab253c81a192985c9025de72100881b8b206f1b8a746ef211670e1e88d152f59d7a186176a6afc3f81629ba7ccb91dab264b027f187004
@@ -507,7 +500,7 @@ __metadata:
   dependencies:
     "@types/node": ^18.11.18
     colorette: 2.0.19
-    discord-api-types: 0.37.25
+    discord-api-types: 0.37.26
     discord.js: 14.7.1
     dotenv: 16.0.3
     prettier: 2.8.1

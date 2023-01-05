@@ -23,7 +23,7 @@
 	},
 	"dependencies": {
 		"colorette": "2.0.19",
-		"discord-api-types": "0.37.25",
+		"discord-api-types": "0.37.26",
 		"discord.js": "14.7.1",
 		"dotenv": "16.0.3"
 	},
