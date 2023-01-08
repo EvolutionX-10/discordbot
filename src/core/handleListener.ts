@@ -2,6 +2,7 @@ import { Client, Listener } from '#lib/structures';
 import { readdirSync } from 'fs';
 
 export async function handleListener(client: Client) {
+	client.rest.on('restDebug', (r) => client.logger.debug(r));
 	const listenerFolders = readdirSync(`${process.cwd()}/dist/listeners`);
 	for (const folder of listenerFolders) {
 		const listenerFiles = readdirSync(
@@ -11,16 +12,14 @@ export async function handleListener(client: Client) {
 		for (const file of listenerFiles) {
 			const path = `../listeners/${folder}/${file}`;
 
-			const { default: listener } = (await import(path)) as {
-				default: Listener;
-			};
+			const listener = (await import(path)).default as Listener;
 			listener.name = file.slice(0, -3);
 			client.listener.set(listener.name, listener);
 
 			if (listener.once) {
-				client.once(listener.event, listener.run);
+				client.once(listener.event, (...args) => listener.run(...args, client));
 			} else {
-				client.on(listener.event, listener.run);
+				client.on(listener.event, (...args) => listener.run(...args, client));
 			}
 		}
 	}

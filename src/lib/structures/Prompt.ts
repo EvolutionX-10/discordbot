@@ -9,7 +9,7 @@ export class Prompt {
 	}
 
 	public async run(user?: User) {
-		const { message, time, questions } = this.options;
+		const { message, time, questions, autoDelete } = this.options;
 
 		if (message.interaction) {
 			user ??= message.interaction.user;
@@ -26,9 +26,10 @@ export class Prompt {
 
 		const answers: string[] = [];
 
-		return new Promise<string[]>((resolve, reject) => {
+		return new Promise<string[]>((resolve) => {
 			collector.on('collect', async (m) => {
 				answers.push(m.content);
+				if (autoDelete) await m.delete();
 				const next = rest.shift();
 				next
 					? await m.channel.send(
@@ -54,6 +55,7 @@ interface PromptOptions {
 	questions: string[] | Question[];
 	message: Message;
 	time?: number;
+	autoDelete?: boolean;
 }
 
 interface Question {

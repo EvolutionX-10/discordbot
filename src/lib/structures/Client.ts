@@ -38,10 +38,8 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 	public logger: Logger = new Logger();
 
 	public override async login(token?: string | undefined): Promise<string> {
-		handleRegistry(this);
-		handleListener(this);
+		await Promise.all([handleRegistry(this), handleListener(this)]);
 		const promiseString = await super.login(token);
-		console.clear();
 		this.logger.info(
 			`Logged in as ${cyanBright(underline(`${this.user?.tag}`))}`
 		);

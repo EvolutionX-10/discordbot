@@ -11,6 +11,7 @@ import {
 	RESTPostAPIChatInputApplicationCommandsJSONBody,
 	APIApplicationCommandOption,
 	ApplicationCommandType,
+	Awaitable,
 } from 'discord.js';
 
 export class Command<T extends CommandType = CommandType> {
@@ -23,14 +24,14 @@ export class Command<T extends CommandType = CommandType> {
 	public runInDM?: boolean;
 	public aliases?: string[];
 	public ownerOnly?: boolean;
-	public commandRun?: (interaction: RunType[T]) => Promise<unknown>;
+	public commandRun?: (interaction: RunType[T]) => Awaitable<unknown>;
 	public messageRun?: (
 		message: Message<boolean>,
 		args: string[]
-	) => Promise<unknown>;
+	) => Awaitable<unknown>;
 	public autoCompleteRun?: (
 		interaction: AutocompleteInteraction
-	) => Promise<unknown>;
+	) => Awaitable<unknown>;
 
 	public constructor(data: CommandOptions<T>) {
 		this.data = data;
@@ -87,10 +88,10 @@ interface BaseCommandOptions<T extends CommandType> {
 	description?: string;
 	defaultMemberPermissions?: PermissionResolvable;
 	ownerOnly?: boolean;
-	commandRun?: (interaction: RunType[T]) => Promise<unknown>;
-	messageRun?: (message: Message<boolean>, args: string[]) => Promise<unknown>;
+	commandRun?: (interaction: RunType[T]) => Awaitable<unknown>;
+	messageRun?: (message: Message<boolean>, args: string[]) => Awaitable<unknown>;
 	autoCompleteRun?: T extends CommandType.ChatInput
-		? (interaction: AutocompleteInteraction) => Promise<unknown>
+		? (interaction: AutocompleteInteraction) => Awaitable<unknown>
 		: never;
 }
 

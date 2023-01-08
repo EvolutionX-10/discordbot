@@ -1,12 +1,11 @@
 import type { Awaitable, ClientEvents } from 'discord.js';
+import { Client } from './Client';
 
 export class Listener<E extends keyof ClientEvents = keyof ClientEvents> {
 	private data: ListenerOptions<E>;
 	public event: keyof ClientEvents;
 	public once: boolean;
-	public run: (
-		...args: E extends keyof ClientEvents ? ClientEvents[E] : unknown[]
-	) => Awaitable<void>;
+	public run: (...args: EventArgs<E>) => Awaitable<void>;
 
 	public constructor(data: ListenerOptions<E>) {
 		this.data = data;
@@ -27,7 +26,7 @@ interface ListenerOptions<T> {
 	name?: string;
 	event: T extends keyof ClientEvents ? T : keyof ClientEvents;
 	once?: boolean;
-	run(
-		...args: T extends keyof ClientEvents ? ClientEvents[T] : unknown[]
-	): Awaitable<void>;
+	run(...args: EventArgs<T>): Awaitable<void>;
 }
+
+type EventArgs<T> = T extends keyof ClientEvents ? [...args: ClientEvents[T], client: Client<true>] : unknown[];
