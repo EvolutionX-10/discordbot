@@ -7,7 +7,7 @@
 		"url": "https://github.com/EvolutionX-10"
 	},
 	"license": "MIT",
-	"packageManager": "yarn@3.2.3",
+	"packageManager": "yarn@3.4.1",
 	"type": "module",
 	"imports": {
 		"#lib/*": "./dist/lib/*/index.js",
@@ -23,14 +23,14 @@
 	},
 	"dependencies": {
 		"colorette": "2.0.19",
-		"discord-api-types": "0.37.12",
-		"discord.js": "latest",
+		"discord-api-types": "0.37.36",
+		"discord.js": "14.8.0",
 		"dotenv": "16.0.3"
 	},
 	"devDependencies": {
-		"@types/node": "18.8.5",
-		"prettier": "2.7.1",
-		"tsup": "6.2.3",
-		"typescript": "4.8.4"
+		"@types/node": "18.15.3",
+		"prettier": "2.8.4",
+		"tsup": "6.6.3",
+		"typescript": "4.9.5"
 	}
 }
