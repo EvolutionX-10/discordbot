@@ -23,8 +23,9 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 		});
 
 		this.logger.setLevel(LogLevel.Debug);
-		this.prefixes = ['q!', '!'];
-		this.ownerIds = ['697795666373640213'];
+		this.prefixes = ['q!', '!']; //! Set your preferable prefix
+		this.ownerIds = ['697795666373640213']; //! Set your Discord User ID
+		this.restDebug = false; //! Set this to true if you want to see REST logs
 	}
 
 	public prefixes: string[] = [];
@@ -59,5 +60,6 @@ declare module 'discord.js' {
 		listener: Collection<string, Listener>;
 		logger: Logger;
 		prefixes: string[];
+		restDebug: boolean;
 	}
 }

@@ -7,18 +7,23 @@ import {
 	Routes,
 } from 'discord.js';
 import { readdirSync } from 'fs';
-import { greenBright } from 'colorette';
+import { greenBright, italic } from 'colorette';
 
 export async function initiateCommands(
 	client: Client,
 	registryOptions: RegistryOptions
 ) {
+	const { register, shortcut, sync } = registryOptions;
+	if (register && shortcut && sync)
+		client.logger.warn(
+			`It is NOT recommended to set all registry options to true as it spams the API, please use a single method!`
+		);
 	client.logger.info(`Syncing Commands...`);
 	const now = Date.now();
 	await Promise.all([
-		registryOptions.shortcut && registerViaRoutes(client),
-		registryOptions.register && registerCommands(client),
-		registryOptions.sync && syncCommands(client),
+		shortcut && registerViaRoutes(client),
+		register && registerCommands(client),
+		sync && syncCommands(client),
 	]);
 	const diff = Date.now() - now;
 	client.logger.info(
@@ -112,7 +117,7 @@ async function checkFromClient(client: Client, command: Command) {
 	const { logger } = client;
 	// Guild Command Check
 
-	logger.debug(`Checking if ${command.name} is already registered`);
+	logger.debug(`Checking if ${italic(command.name)} is already registered`);
 
 	if (command.guildIds?.length) {
 		for (const guildId of command.guildIds) {

@@ -2,7 +2,8 @@ import { Client, Listener } from '#lib/structures';
 import { readdirSync } from 'fs';
 
 export async function handleListener(client: Client) {
-	client.rest.on('restDebug', (r) => client.logger.debug(r));
+	client.restDebug &&
+		client.rest.on('restDebug', (r) => client.logger.debug(r));
 	const listenerFolders = readdirSync(`${process.cwd()}/dist/listeners`);
 	for (const folder of listenerFolders) {
 		const listenerFiles = readdirSync(
