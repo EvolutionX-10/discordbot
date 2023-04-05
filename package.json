@@ -1,13 +1,13 @@
 {
 	"name": "discordbot",
-	"version": "1.4.0",
+	"version": "1.5.0",
 	"main": "./dist/index.js",
 	"author": {
 		"name": "EvolutionX-10",
 		"url": "https://github.com/EvolutionX-10"
 	},
 	"license": "MIT",
-	"packageManager": "yarn@3.4.1",
+	"packageManager": "yarn@3.5.0",
 	"type": "module",
 	"imports": {
 		"#lib/*": "./dist/lib/*/index.js",
@@ -23,14 +23,14 @@
 	},
 	"dependencies": {
 		"colorette": "2.0.19",
-		"discord-api-types": "0.37.36",
-		"discord.js": "14.8.0",
+		"discord-api-types": "0.37.37",
+		"discord.js": "14.9.0",
 		"dotenv": "16.0.3"
 	},
 	"devDependencies": {
-		"@types/node": "18.15.3",
-		"prettier": "2.8.4",
-		"tsup": "6.6.3",
-		"typescript": "4.9.5"
+		"@types/node": "18.15.11",
+		"prettier": "2.8.7",
+		"tsup": "6.7.0",
+		"typescript": "5.0.3"
 	}
 }
