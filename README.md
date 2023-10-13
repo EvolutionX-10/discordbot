@@ -48,7 +48,8 @@ You also need to have a Discord Bot application created. If you haven't done it 
 Now you can proceed to install dependencies. <br />
 After that, we will compile our TypeScript code to JavaScript
 
-Note: This project uses `yarn` to manage dependencies. If you don't have `yarn` installed, you can install it using [`npm install -g yarn`](https://yarnpkg.com/en/docs/install).
+> **Note**
+> This project uses `yarn` to manage dependencies. If you don't have `yarn` installed, you can install it using [`npm install -g yarn`](https://yarnpkg.com/en/docs/install).
 
 ```bash
 yarn && yarn build
