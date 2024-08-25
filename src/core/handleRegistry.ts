@@ -1,22 +1,14 @@
 import { CommandType } from '#lib/enums';
 import { Client, Command } from '#lib/structures';
-import {
-	ApplicationCommandData,
-	ApplicationCommandType,
-	REST,
-	Routes,
-} from 'discord.js';
+import { ApplicationCommandData, ApplicationCommandType, REST, Routes } from 'discord.js';
 import { readdirSync } from 'fs';
 import { greenBright, italic } from 'colorette';
 
-export async function initiateCommands(
-	client: Client,
-	registryOptions: RegistryOptions
-) {
+export async function initiateCommands(client: Client, registryOptions: RegistryOptions) {
 	const { register, shortcut, sync } = registryOptions;
 	if (register && shortcut && sync)
 		client.logger.warn(
-			`It is NOT recommended to set all registry options to true as it spams the API, please use a single method!`
+			`It is NOT recommended to set all registry options to true as it spams the API, please use a single method!`,
 		);
 	client.logger.info(`Syncing Commands...`);
 	const now = Date.now();
@@ -26,17 +18,13 @@ export async function initiateCommands(
 		sync && syncCommands(client),
 	]);
 	const diff = Date.now() - now;
-	client.logger.info(
-		`Commands Synced in ${greenBright(`${diff.toLocaleString()}ms`)}!`
-	);
+	client.logger.info(`Commands Synced in ${greenBright(`${diff.toLocaleString()}ms`)}!`);
 }
 
 export async function handleRegistry(client: Client) {
-	const commandFolders = readdirSync(`${process.cwd()}/dist/commands`);
+	const commandFolders = readdirSync(`${process.cwd()}/src/commands`);
 	for (const folder of commandFolders) {
-		const commandsFiles = readdirSync(
-			`${process.cwd()}/dist/commands/${folder}`
-		).filter((file) => file.endsWith('.js'));
+		const commandsFiles = readdirSync(`${process.cwd()}/src/commands/${folder}`).filter((file) => file.endsWith('.ts'));
 
 		for (const file of commandsFiles) {
 			const path = `../commands/${folder}/${file}`;
@@ -44,7 +32,7 @@ export async function handleRegistry(client: Client) {
 
 			if (!command)
 				throw new Error(
-					`There is no default exported Command Class in ${file}!\nPath: ${process.cwd()}/dist/commands/${folder}/${file}`
+					`There is no default exported Command Class in ${file}!\nPath: ${process.cwd()}/src/commands/${folder}/${file}`,
 				);
 
 			command.name = file.split('.')[0];
@@ -56,51 +44,31 @@ export async function handleRegistry(client: Client) {
 
 function registerViaRoutes(client: Client) {
 	const rest = new REST({ version: '10' }).setToken(client.token!);
-	const guildCommands = client.commands.filter(
-		(c) => Boolean(c.commandRun) && Boolean(c.guildIds.length)
-	);
-	const globalCommands = client.commands.filter(
-		(c) => Boolean(c.commandRun) && !c.guildIds.length
-	);
+	const guildCommands = client.commands.filter((c) => Boolean(c.commandRun) && Boolean(c.guildIds.length));
+	const globalCommands = client.commands.filter((c) => Boolean(c.commandRun) && !c.guildIds.length);
 
 	if (globalCommands.size) {
-		client.logger.debug(
-			`Started refreshing ${globalCommands.size} application (/) commands.`
-		);
+		client.logger.debug(`Started refreshing ${globalCommands.size} application (/) commands.`);
 		rest.put(Routes.applicationCommands(client.user!.id), {
 			body: globalCommands.map((g) => g.buildAPIApplicationCommand()),
 		});
-		client.logger.debug(
-			`Successfully reloaded ${globalCommands.size} application (/) commands.`
-		);
+		client.logger.debug(`Successfully reloaded ${globalCommands.size} application (/) commands.`);
 	}
+
 	if (guildCommands.size) {
-		const mapOfGuildIds = [
-			...new Set(guildCommands.map((c) => c.guildIds).flat()),
-		];
+		const mapOfGuildIds = [...new Set(guildCommands.map((c) => c.guildIds).flat())];
 
 		if (mapOfGuildIds.length > 1) {
-			client.logger.warn(
-				'Using Routes (faster) method, only first guild id will be considered!'
-			);
+			client.logger.warn('Using Routes (faster) method, only first guild id will be considered!');
 			client.logger.warn('Please use detailed registry for multiple guilds');
 		}
 
-		client.logger.debug(
-			`Started refreshing ${globalCommands.size} application (/) guild commands.`
-		);
-		rest.put(
-			Routes.applicationGuildCommands(
-				client.user!.id,
-				guildCommands.first()!.guildIds[0]
-			),
-			{
-				body: guildCommands.map((g) => g.buildAPIApplicationCommand()),
-			}
-		);
-		client.logger.debug(
-			`Successfully reloaded ${guildCommands.size} application (/) guild commands.`
-		);
+		client.logger.debug(`Started refreshing ${guildCommands.size} application (/) guild commands.`);
+
+		rest.put(Routes.applicationGuildCommands(client.user!.id, guildCommands.first()!.guildIds[0]), {
+			body: guildCommands.map((g) => g.buildAPIApplicationCommand()),
+		});
+		client.logger.debug(`Successfully reloaded ${guildCommands.size} application (/) guild commands.`);
 	}
 }
 
@@ -115,9 +83,10 @@ function registerCommands(client: Client) {
 
 async function checkFromClient(client: Client, command: Command) {
 	const { logger } = client;
-	// Guild Command Check
 
 	logger.debug(`Checking if ${italic(command.name)} is already registered`);
+
+	// Guild Command Check
 
 	if (command.guildIds?.length) {
 		for (const guildId of command.guildIds) {
@@ -125,9 +94,7 @@ async function checkFromClient(client: Client, command: Command) {
 
 			if (!guild) throw new Error(`Invalid Guild Id in ${command.name}.ts!`);
 
-			const APICommand = (await guild.commands.fetch()).find(
-				(cmd) => cmd.name === command.name
-			);
+			const APICommand = (await guild.commands.fetch()).find((cmd) => cmd.name === command.name);
 
 			const providedCommandData: ApplicationCommandData = {
 				name: command.name,
@@ -153,9 +120,9 @@ async function checkFromClient(client: Client, command: Command) {
 
 	// Global Command Check
 
-	const APICommand = (
-		await (await client.application?.fetch())!.commands.fetch()
-	).find((cmd) => cmd.name === command.name);
+	const APICommand = (await (await client.application?.fetch())!.commands.fetch()).find(
+		(cmd) => cmd.name === command.name,
+	);
 
 	const providedCommandData: ApplicationCommandData = {
 		name: command.name,
@@ -184,21 +151,14 @@ async function syncCommands(client: Client) {
 	const { logger } = client;
 	logger.debug(`Fetching Global Commands`);
 
-	const localGlobalCommands = [
-		...client.commands
-			.filter((c) => !c.guildIds?.length && Boolean(c.commandRun))
-			.keys(),
-	];
+	const localGlobalCommands = [...client.commands.filter((c) => !c.guildIds?.length && Boolean(c.commandRun)).keys()];
 
-	const APIGlobalCommands =
-		await (await client.application?.fetch())!.commands.fetch();
+	const APIGlobalCommands = await (await client.application?.fetch())!.commands.fetch();
 
 	const APIGlobalCommandsNames = APIGlobalCommands.map((c) => c.name);
 
 	logger.debug(`Comparing Global Commands data to local data`);
-	const toRemove = APIGlobalCommandsNames.filter(
-		(c) => !localGlobalCommands.includes(c)
-	);
+	const toRemove = APIGlobalCommandsNames.filter((c) => !localGlobalCommands.includes(c));
 	if (toRemove.length) {
 		logger.debug(`Removing ${toRemove.length} Global Commands from API`);
 	} else logger.debug(`No Global Commands found to remove, All synced!`);
@@ -217,26 +177,16 @@ async function syncCommands(client: Client) {
 		const APIGuildCommands = await guild.commands.fetch();
 
 		const localGuildCommands = [
-			...client.commands
-				.filter(
-					(c) =>
-						Boolean(c.guildIds?.includes(guild.id)) && Boolean(c.commandRun)
-				)
-				.keys(),
+			...client.commands.filter((c) => Boolean(c.guildIds?.includes(guild.id)) && Boolean(c.commandRun)).keys(),
 		];
 
 		const APIGuildCommandsNames = APIGuildCommands.map((c) => c.name);
 
 		logger.debug(`Comparing Guild Commands data to local data`);
-		const toRemove = APIGuildCommandsNames.filter(
-			(c) => !localGuildCommands.includes(c)
-		);
+		const toRemove = APIGuildCommandsNames.filter((c) => !localGuildCommands.includes(c));
 		if (toRemove.length) {
 			logger.debug(`Removing ${toRemove.length} Guild Commands from API`);
-		} else
-			logger.debug(
-				`No Commands found to remove from Guild "${guild.name}", All synced!`
-			);
+		} else logger.debug(`No Commands found to remove from Guild "${guild.name}", All synced!`);
 
 		for (const command of toRemove) {
 			logger.debug(`Deleted Guild Command ${command} -> ${guild.name}`);
@@ -246,7 +196,16 @@ async function syncCommands(client: Client) {
 }
 
 interface RegistryOptions {
+	/**
+	 * Syncs commands with local commands
+	 */
 	sync?: boolean;
+	/**
+	 * Registers commands in detailed way
+	 */
 	register?: boolean;
+	/**
+	 * Uses Native [Routes](https://discordjs.guide/creating-your-bot/command-deployment.html#command-registration)
+	 */
 	shortcut?: boolean;
 }

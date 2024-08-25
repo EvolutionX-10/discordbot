@@ -1,16 +1,10 @@
 import { handleListener, handleRegistry, initiateCommands } from '#core';
 import { LogLevel } from '#lib/enums';
 import { Command, Listener, Logger } from '#lib/structures';
-import {
-	Client as DJSClient,
-	Collection,
-	GatewayIntentBits,
-	Partials,
-} from 'discord.js';
-import 'dotenv/config';
+import { Client as DJSClient, Collection, GatewayIntentBits, Partials, ActivityType } from 'discord.js';
 import { cyanBright, underline } from 'colorette';
 
-export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
+export class Client<Ready extends boolean = true> extends DJSClient<Ready> {
 	public constructor() {
 		super({
 			intents: [
@@ -20,6 +14,15 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 				GatewayIntentBits.MessageContent,
 			],
 			partials: [Partials.Channel],
+			presence: {
+				status: 'dnd', // ! Set your bot's status (online, dnd, idle, invisible)
+				activities: [
+					{
+						name: 'Template Stars go brrrr', // ! Set your bot's activity
+						type: ActivityType.Watching,
+					},
+				],
+			},
 		});
 
 		this.logger.setLevel(LogLevel.Debug);
@@ -39,16 +42,17 @@ export class Client<Ready extends boolean = boolean> extends DJSClient<Ready> {
 	public logger: Logger = new Logger();
 
 	public override async login(token?: string | undefined): Promise<string> {
-		await Promise.all([handleRegistry(this), handleListener(this)]);
+		await Promise.all([handleRegistry(this as Client), handleListener(this as Client)]);
+
 		const promiseString = await super.login(token);
-		this.logger.info(
-			`Logged in as ${cyanBright(underline(`${this.user?.tag}`))}`
-		);
-		await initiateCommands(this, {
-			register: false, //! For detailed Registry
-			sync: false, //! For syncing commands with local commands
-			shortcut: true, //! Faster method, uses Routes (https://discordjs.guide/interactions/slash-commands.html#registering-slash-commands)
+		this.logger.info(`Logged in as ${cyanBright(underline(`${this.user?.tag}`))}`);
+
+		await initiateCommands(this as Client, {
+			register: false,
+			sync: false,
+			shortcut: true,
 		});
+
 		return promiseString;
 	}
 }

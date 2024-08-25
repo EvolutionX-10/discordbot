@@ -2,6 +2,7 @@ import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
 
 export default new Command({
+	name: 'Save',
 	type: CommandType.Message,
 	description: 'DMs you the message',
 	dmPermission: false,

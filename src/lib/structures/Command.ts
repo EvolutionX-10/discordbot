@@ -124,7 +124,7 @@ type CommandOptions<T extends CommandType> = T extends CommandType.ChatInput
 
 type BaseCommand = GuildCommand | GlobalCommand;
 
-type NonEmptyArray<T extends `${number}` = `${number}`> = [T, ...T[]];
+type NonEmptyArray<T extends string = string> = [T, ...T[]];
 
 interface RunType {
 	[CommandType.ChatInput]: ChatInputCommandInteraction;

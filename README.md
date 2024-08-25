@@ -16,14 +16,14 @@ This place can be a good start for you to begin your journey of making a bot in 
 ## Features
 
 - Written in [TypeScript](https://www.typescriptlang.org/) 😋
-- Uses [v14.13](https://discordjs.dev/) 😎
+- Uses [v14.15](https://discordjs.dev/) 😎
 - Fully ESM based 😍
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
 - Default commands 😄
   - Chat Input (Slash) Commands [`ping`, `eval`, `paginate`, `survey`]
   - User Commands [`pong`]
-  - Message Commands [`save`]
+  - Message Commands [`Save`]
   - Legacy Commands [`say`, `paginate`, `survey`]
 - Supports Message Commands, Chat Input Commands, ContextMenu Commands, and more! 😜
 - Type safe, simple, and easy to understand 👍
@@ -49,10 +49,10 @@ Now you can proceed to install dependencies. <br />
 After that, we will compile our TypeScript code to JavaScript
 
 > **Note**
-> This project uses `yarn` to manage dependencies. If you don't have `yarn` installed, you can install it using [`npm install -g yarn`](https://yarnpkg.com/en/docs/install).
+> This project uses `bun` to manage dependencies. If you don't have `bun` installed, you can read [here](https://bun.sh/docs/installation) on how to install it.
 
 ```bash
-yarn && yarn build
+bun install
 ```
 
 ## Setting token
@@ -66,13 +66,11 @@ DISCORD_TOKEN=<your-token-without-braces>
 
 ## Starting the bot
 
-Now we can start the bot using `yarn start` script.
+Now we can start the bot using `bun run dev` script.
 
 ```bash
-yarn start
+bun run dev
 ```
-
-Note: You need to have node version `16.9` or higher!
 
 <details>
 <summary>Commands</summary>
@@ -131,7 +129,9 @@ A change should have a valid reason, and features should be added only if it's b
 <!-- References -->
 
 [^git]: It's recommended to have [git](https://git-scm.com/) installed on your machine.
+
 [^lint]: We recommend using [`prettier`] to style your code.
+
 [^commit]: We strongly follow the [`Commit Message Conventions`]. This is important when commiting your code for a PR.
 
 [`prettier`]: https://prettier.io/

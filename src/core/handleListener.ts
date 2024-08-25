@@ -4,11 +4,11 @@ import { readdirSync } from 'fs';
 export async function handleListener(client: Client) {
 	client.restDebug &&
 		client.rest.on('restDebug', (r) => client.logger.debug(r));
-	const listenerFolders = readdirSync(`${process.cwd()}/dist/listeners`);
+	const listenerFolders = readdirSync(`${process.cwd()}/src/listeners`);
 	for (const folder of listenerFolders) {
 		const listenerFiles = readdirSync(
-			`${process.cwd()}/dist/listeners/${folder}`
-		).filter((file) => file.endsWith('.js'));
+			`${process.cwd()}/src/listeners/${folder}`
+		).filter((file) => file.endsWith('.ts'));
 
 		for (const file of listenerFiles) {
 			const path = `../listeners/${folder}/${file}`;

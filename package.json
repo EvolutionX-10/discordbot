@@ -1,36 +1,31 @@
 {
 	"name": "discordbot",
-	"version": "1.5.0",
-	"main": "./dist/index.js",
+	"version": "1.6.0",
+	"main": "src/index.ts",
 	"author": {
 		"name": "EvolutionX-10",
 		"url": "https://github.com/EvolutionX-10"
 	},
 	"license": "MIT",
-	"packageManager": "yarn@3.5.0",
 	"type": "module",
 	"imports": {
-		"#lib/*": "./dist/lib/*/index.js",
-		"#core": "./dist/core/index.js",
-		"#root/*": "./dist/*.js"
+		"#lib/*": "./src/lib/*/index.ts",
+		"#core": "./src/core/index.ts",
+		"#root/*": "./src/*.ts"
 	},
 	"scripts": {
-		"dev": "yarn build && node --no-warnings .",
-		"start": "node .",
-		"build": "tsup",
-		"typecheck": "tsc -b src",
-		"watch": "tsup --watch --onSuccess=\"node .\""
+		"dev": "bun run --watch .",
+		"start": "bun run ."
 	},
 	"dependencies": {
 		"colorette": "2.0.20",
-		"discord-api-types": "0.37.56",
-		"discord.js": "14.13.0",
-		"dotenv": "16.3.1"
+		"discord-api-types": "0.37.97",
+		"discord.js": "14.15.3"
 	},
 	"devDependencies": {
-		"@types/node": "20.5.8",
-		"prettier": "3.0.3",
-		"tsup": "7.2.0",
-		"typescript": "5.2.2"
+		"prettier": "3.3.3",
+		"typescript": "5.5.4",
+		"@types/node": "22.5.0",
+		"@types/bun": "1.1.8"
 	}
 }
