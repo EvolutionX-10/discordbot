@@ -1,0 +1,13 @@
+.dockerignore
+node_modules
+.vscode
+.git
+.editorconfig
+Dockerfile
+.prettierrc
+README.md
+LICENSE.md
+.prettierignore
+.env
+.env.example
+.gitattributes

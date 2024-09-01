@@ -43,7 +43,7 @@ This guide assumes you have solid understanding of JavaScript and at least basic
 Click on [`Use this template`](https://github.com/EvolutionX-10/discordbot/generate) button and it will generate a new repository based on this repository in your account. Once done, you may clone your repository locally using git[^git]. <br />
 You also need to have a Discord Bot application created. If you haven't done it yet, you can do it by following the guide [here](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
-## Installation
+## Dev Setup
 
 Now you can proceed to install dependencies. <br />
 After that, we will compile our TypeScript code to JavaScript
@@ -55,7 +55,7 @@ After that, we will compile our TypeScript code to JavaScript
 bun install
 ```
 
-## Setting token
+### Setting token
 
 1. Rename `.env.example` to `.env`
 2. Add your token to the `.env` file in this format
@@ -64,13 +64,31 @@ bun install
 DISCORD_TOKEN=<your-token-without-braces>
 ```
 
-## Starting the bot
+### Starting the bot
 
 Now we can start the bot using `bun run dev` script.
 
 ```bash
 bun run dev
 ```
+
+## Production Setup
+
+To run in production environment, we use Docker. You can read more about it [here](https://docs.docker.com/get-started/).
+
+### Building the image
+
+```bash
+docker build -t discordbot .
+```
+
+### Running the image
+
+```bash
+docker run -d --name discordbot -e DISCORD_TOKEN=<your-token-without-braces> discordbot
+```
+
+## Commands and Listeners
 
 <details>
 <summary>Commands</summary>
