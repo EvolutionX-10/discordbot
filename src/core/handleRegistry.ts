@@ -98,7 +98,7 @@ async function checkFromClient(client: Client, command: Command) {
 
 			const providedCommandData: ApplicationCommandData = {
 				name: command.name,
-				type: command.type as unknown as ApplicationCommandType,
+				type: mapCommandType(command.type as Exclude<CommandType, CommandType.Legacy>),
 				options: command.options,
 				description: command.description ?? '',
 				defaultMemberPermissions: command.permissions,
@@ -126,7 +126,7 @@ async function checkFromClient(client: Client, command: Command) {
 
 	const providedCommandData: ApplicationCommandData = {
 		name: command.name,
-		type: command.type as unknown as ApplicationCommandType,
+		type: mapCommandType(command.type as Exclude<CommandType, CommandType.Legacy>),
 		options: command.options,
 		description: command.description ?? '',
 		defaultMemberPermissions: command.permissions,
@@ -192,6 +192,21 @@ async function syncCommands(client: Client) {
 			logger.debug(`Deleted Guild Command ${command} -> ${guild.name}`);
 			APIGuildCommands.find((cmd) => cmd.name === command)?.delete();
 		}
+	}
+}
+
+function mapCommandType(
+	type: Exclude<CommandType, CommandType.Legacy>,
+): ApplicationCommandType.ChatInput | ApplicationCommandType.User | ApplicationCommandType.Message | undefined {
+	switch (type) {
+		case CommandType.ChatInput:
+			return ApplicationCommandType.ChatInput;
+		case CommandType.User:
+			return ApplicationCommandType.User;
+		case CommandType.Message:
+			return ApplicationCommandType.Message;
+		default:
+			return undefined;
 	}
 }
 

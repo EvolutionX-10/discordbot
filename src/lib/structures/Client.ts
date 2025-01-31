@@ -25,7 +25,7 @@ export class Client<Ready extends boolean = true> extends DJSClient<Ready> {
 			},
 		});
 
-		this.logger.setLevel(LogLevel.Debug);
+		this.logger.setLevel(LogLevel.Info); //! Set the logger level
 		this.prefixes = ['q!', '!']; //! Set your preferable prefix
 		this.ownerIds = ['697795666373640213']; //! Set your Discord User ID
 		this.restDebug = false; //! Set this to true if you want to see REST logs

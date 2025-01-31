@@ -1,5 +1,6 @@
 import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
+import { MessageFlags } from 'discord.js';
 
 export default new Command({
 	name: 'Save',
@@ -12,15 +13,15 @@ export default new Command({
 		if (!msg.content)
 			return interaction.reply({
 				content: 'No message content found',
-				ephemeral: true,
+				flags: MessageFlags.Ephemeral,
 			});
 		return interaction.user
 			.send({ content: msg.content })
-			.then(() => interaction.reply({ content: 'DM sent!', ephemeral: true }))
+			.then(() => interaction.reply({ content: 'DM sent!', flags: MessageFlags.Ephemeral }))
 			.catch(() =>
 				interaction.reply({
 					content: 'DM failed to send! Please open your DMs',
-					ephemeral: true,
+					flags: MessageFlags.Ephemeral,
 				})
 			);
 	},

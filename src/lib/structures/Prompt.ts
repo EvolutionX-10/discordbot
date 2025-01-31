@@ -2,8 +2,7 @@ import { Message, User } from 'discord.js';
 
 export class Prompt {
 	public constructor(public readonly options: PromptOptions) {
-		if (this.options.questions.length === 0)
-			throw new Error('No valid questions to prompt!');
+		if (this.options.questions.length === 0) throw new Error('No valid questions to prompt!');
 
 		this.options.time ??= 60_000;
 	}
@@ -11,12 +10,15 @@ export class Prompt {
 	public async run(user?: User) {
 		const { message, time, questions, autoDelete } = this.options;
 
-		if (message.interaction) {
-			user ??= message.interaction.user;
+		if (message.interactionMetadata) {
+			user ??= message.interactionMetadata.user;
 		}
 
 		user ??= message.author;
 		const [q, ...rest] = questions;
+		if (!message.channel.isSendable()) {
+			throw new Error('Channel is not sendable');
+		}
 		await message.channel.send(typeof q === 'string' ? q : q!.question);
 
 		const collector = message.channel.createMessageCollector({
@@ -28,13 +30,14 @@ export class Prompt {
 
 		return new Promise<string[]>((resolve) => {
 			collector.on('collect', async (m) => {
+				if (!m.channel.isSendable()) {
+					throw new Error('Channel is not sendable');
+				}
 				answers.push(m.content);
 				if (autoDelete) await m.delete();
 				const next = rest.shift();
 				next
-					? await m.channel.send(
-							typeof next === 'string' ? next : next.question
-					  )
+					? await m.channel.send(typeof next === 'string' ? next : next.question)
 					: collector.stop('Collected All Answers');
 				collector.resetTimer({
 					time: typeof next !== 'string' ? next?.time : undefined,
@@ -43,6 +46,9 @@ export class Prompt {
 
 			collector.on('end', async (c) => {
 				if (!c.size) {
+					if (!message.channel.isSendable()) {
+						throw new Error('Channel is not sendable');
+					}
 					await message.channel.send('No response was recieved!');
 				}
 				resolve(answers);

@@ -1,6 +1,6 @@
 import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
-import { ApplicationCommandOptionType } from 'discord.js';
+import { ApplicationCommandOptionType, MessageFlags } from 'discord.js';
 
 export default new Command({
 	type: CommandType.ChatInput,
@@ -15,9 +15,10 @@ export default new Command({
 		},
 	],
 	async commandRun(interaction) {
-		return interaction.reply({ content: 'Pong!', ephemeral: true });
+		return interaction.reply({ content: 'Pong!', flags: MessageFlags.Ephemeral });
 	},
 	async messageRun(message) {
+		if (!message.channel.isSendable()) return;
 		return message.channel.send('Pong!');
 	},
 	async autoCompleteRun(interaction) {

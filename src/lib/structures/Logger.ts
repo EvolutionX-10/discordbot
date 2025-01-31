@@ -12,9 +12,6 @@ import {
 } from 'colorette';
 
 export class Logger {
-	public constructor() {
-		console.clear();
-	}
 	public setLevel(level: LogLevel): void {
 		this.level = level;
 	}

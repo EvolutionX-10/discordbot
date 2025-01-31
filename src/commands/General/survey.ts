@@ -14,10 +14,13 @@ export default new Command({
 	description: 'Survey time!',
 	aliases: ['s'],
 	async commandRun(interaction) {
-		const message = await interaction.reply({
+		const interactionResponse = await interaction.reply({
 			content: 'starting the survey...',
-			fetchReply: true,
+			withResponse: true,
 		});
+
+		const message = (interaction.channel?.messages.cache.get(interactionResponse.interaction.responseMessageId!) ||
+			(await interaction.channel?.messages.fetch(interactionResponse.interaction.responseMessageId!)))!;
 
 		return prompt(message);
 	},

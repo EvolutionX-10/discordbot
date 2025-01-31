@@ -16,7 +16,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 ## Features
 
 - Written in [TypeScript](https://www.typescriptlang.org/) 😋
-- Uses [v14.15](https://discordjs.dev/) 😎
+- Uses [v14.17](https://discordjs.dev/) 😎
 - Fully ESM based 😍
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
@@ -36,11 +36,11 @@ This place can be a good start for you to begin your journey of making a bot in 
 
 ## Before you begin
 
-This guide assumes you have solid understanding of JavaScript and at least basic understanding of TypeScript. If you don't, I recommend you start with the [JavaScript guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) and [TypeScript book](https://www.typescriptlang.org/docs/).
+This guide assumes you have **solid** understanding of JavaScript and at least basic understanding of TypeScript. If you don't, I recommend you start with the [JavaScript guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) and [TypeScript book](https://www.typescriptlang.org/docs/).
 
 ## Getting Started
 
-Click on [`Use this template`](https://github.com/EvolutionX-10/discordbot/generate) button and it will generate a new repository based on this repository in your account. Once done, you may clone your repository locally using git[^git]. <br />
+Click on [`Use this template`](https://github.com/EvolutionX-10/discordbot/generate) button and it will generate a new repository based on this repository in your account. Once done, you may proceed to clone your repository locally using git[^git]. <br />
 You also need to have a Discord Bot application created. If you haven't done it yet, you can do it by following the guide [here](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot).
 
 ## Dev Setup
@@ -61,15 +61,15 @@ bun install
 2. Add your token to the `.env` file in this format
 
 ```
-DISCORD_TOKEN=<your-token-without-braces>
+DISCORD_TOKEN=abc
 ```
 
 ### Starting the bot
 
-Now we can start the bot using `bun run dev` script.
+Now we can start the bot using `bun dev` script.
 
 ```bash
-bun run dev
+bun dev
 ```
 
 ## Production Setup
@@ -85,7 +85,7 @@ docker build -t discordbot .
 ### Running the image
 
 ```bash
-docker run -d --name discordbot -e DISCORD_TOKEN=<your-token-without-braces> discordbot
+docker run -d --name discordbot -e DISCORD_TOKEN=abc discordbot
 ```
 
 ## Commands and Listeners
@@ -98,12 +98,13 @@ docker run -d --name discordbot -e DISCORD_TOKEN=<your-token-without-braces> dis
 ```ts
 import { CommandType } from '#lib/enums';
 import { Command } from '#lib/structures';
+import { MessageFlags } from 'discord.js';
 
 export default new Command({
 	type: CommandType.ChatInput,
 	description: 'Ping Pong!!',
 	async commandRun(interaction) {
-		return interaction.reply({ content: 'Pong!', ephemeral: true });
+		return interaction.reply({ content: 'Pong!', flags: MessageFlags.Ephemeral });
 	},
 	async messageRun(message) {
 		return message.channel.send('Pong!');
