@@ -16,7 +16,7 @@ This place can be a good start for you to begin your journey of making a bot in 
 ## Features
 
 - Written in [TypeScript](https://www.typescriptlang.org/) 😋
-- Uses [v14.17](https://discordjs.dev/) 😎
+- Uses [v14.23](https://discordjs.dev/) 😎
 - Fully ESM based 😍
 - Minimal dependencies ⚡
 - Automated Registering/Updating/Deleting/Syncing of Application Commands 😮
