@@ -47,11 +47,7 @@ export class Client<Ready extends boolean = true> extends DJSClient<Ready> {
 		const promiseString = await super.login(token);
 		this.logger.info(`Logged in as ${cyanBright(underline(`${this.user?.tag}`))}`);
 
-		await initiateCommands(this as Client, {
-			register: false,
-			sync: false,
-			shortcut: true,
-		});
+		await initiateCommands(this as Client, { register: false, sync: false, shortcut: true });
 
 		return promiseString;
 	}
