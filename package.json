@@ -15,17 +15,21 @@
 	},
 	"scripts": {
 		"dev": "bun --watch .",
-		"start": "bun ."
+		"start": "bun .",
+		"typecheck": "tsc --noEmit -p src/tsconfig.json",
+		"format:check": "prettier --check .",
+		"test": "bun test"
 	},
 	"dependencies": {
 		"colorette": "2.0.20",
-		"discord-api-types": "0.38.30",
-		"discord.js": "14.23.2"
+		"discord-api-types": "0.38.60",
+		"discord.js": "14.28.1"
 	},
 	"devDependencies": {
-		"prettier": "3.6.2",
-		"typescript": "5.9.3",
-		"@types/node": "24.7.2",
-		"@types/bun": "1.3.0"
-	}
+		"prettier": "3.10.1",
+		"typescript": "7.0.2",
+		"@types/node": "26.6.6",
+		"@types/bun": "1.4.5"
+	},
+	"packageManager": "bun@1.4.5"
 }

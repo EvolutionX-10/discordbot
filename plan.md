@@ -1,8 +1,7 @@
 # Plan: an easy Discord bot starting point for humans and coding agents
 
-Status: implementation in progress after the planning PR merged. README and
-onboarding updates and JSDoc coverage are implemented; dependency upgrades and
-the remaining implementation checks are tracked below.
+Status: onboarding, JSDoc coverage, and the TypeScript 7/Bun upgrade are
+implemented. Offline validation passes; live Discord checks remain open below.
 
 ## Goal and boundaries
 
@@ -50,9 +49,9 @@ direct versions in `package.json`. Running
 
 These are existing static-check findings, not evidence that the working bot
 needs a redesign. Resolve them with focused compatibility changes in the
-upgrade work. Bun is unavailable in the planning environment, so a fresh frozen
-install, Bun execution, and container/live Discord smoke checks have not been
-performed for this PR.
+upgrade work. Bun was unavailable during the planning PR, so its validation did
+not include a frozen install, Bun execution, or container/live checks. The
+implementation results below supersede those historical limitations.
 
 ## 1. Make onboarding useful for both audiences
 
@@ -116,42 +115,42 @@ record the selected versions and sources in the upgrade PR, and pin concrete
 versions for reproducibility. Recheck release status rather than assuming a
 preview tag is stable or that this snapshot stays current.
 
-Observed stable releases below were checked against npm metadata and the Bun
-release on 2026-11-23. They are a research snapshot, not changes made in this PR.
+The selected stable releases below were checked against npm metadata and the Bun
+release on 2026-11-23 and are now implemented in the upgrade branch.
 
-| Component            | Current pin | Observed stable | Upgrade scope                                                                         |
-| -------------------- | ----------- | --------------- | ------------------------------------------------------------------------------------- |
-| Bun runtime / Docker | `1.3.0`     | `1.4.5`         | Align local instructions, package-manager metadata, and the existing Docker base tag. |
-| `typescript`         | `5.9.3`     | `7.0.2`         | Stable v7 compiler and only the config changes required for it.                       |
-| `discord.js`         | `14.23.2`   | `14.28.1`       | Review migration notes and the selected release's engine requirements.                |
-| `discord-api-types`  | `0.38.30`   | `0.38.60`       | Replace fragile internal type usage with public equivalents.                          |
-| `colorette`          | `2.0.20`    | `2.0.20`        | Already current in this snapshot; recheck during implementation.                      |
-| `prettier`           | `3.6.2`     | `3.10.1`        | Preserve repository formatting choices.                                               |
-| `@types/node`        | `24.7.2`    | `26.6.6`        | Check compatibility with Bun and dependency declarations.                             |
-| `@types/bun`         | `1.3.0`     | `1.4.5`         | Keep compatible with the selected Bun runtime.                                        |
+| Component            | Baseline pin | Selected stable | Upgrade scope                                                                         |
+| -------------------- | ------------ | --------------- | ------------------------------------------------------------------------------------- |
+| Bun runtime / Docker | `1.3.0`      | `1.4.5`         | Align local instructions, package-manager metadata, and the existing Docker base tag. |
+| `typescript`         | `5.9.3`      | `7.0.2`         | Stable v7 compiler and only the config changes required for it.                       |
+| `discord.js`         | `14.23.2`    | `14.28.1`       | Review migration notes and the selected release's engine requirements.                |
+| `discord-api-types`  | `0.38.30`    | `0.38.60`       | Replace fragile internal type usage with public equivalents.                          |
+| `colorette`          | `2.0.20`     | `2.0.20`        | Already current; retained after rechecking the stable release.                        |
+| `prettier`           | `3.6.2`      | `3.10.1`        | Preserve repository formatting choices.                                               |
+| `@types/node`        | `24.7.2`     | `26.6.6`        | Check compatibility with Bun and dependency declarations.                             |
+| `@types/bun`         | `1.3.0`      | `1.4.5`         | Keep compatible with the selected Bun runtime.                                        |
 
-- [ ] Record exact latest stable versions, release channels, relevant breaking
+- [x] Record exact latest stable versions, release channels, relevant breaking
       changes, and runtime/type compatibility before editing dependencies.
-- [ ] Upgrade Bun and packages, regenerate `bun.lock`, and review transitive
+- [x] Upgrade Bun and packages, regenerate `bun.lock`, and review transitive
       changes. Preserve exact direct pins; do not hand-edit the lockfile or
       force transitive overrides without evidence they are needed.
-- [ ] Migrate `src/tsconfig.json` for TypeScript 7: replace the removed legacy
+- [x] Migrate `src/tsconfig.json` for TypeScript 7: replace the removed legacy
       `moduleResolution: "Node"` with a mode suitable for Bun, remove `baseUrl`,
       keep paths relative to the config, and explicitly include ambient types
       such as `types: ["bun", "node"]` to account for the changed defaults.
       Keep strict checking, no emit, ESM, aliases, and direct Bun execution.
-- [ ] Use the stable compiler's published package and binary. Do not silently
+- [x] Use the stable compiler's published package and binary. Do not silently
       substitute `@typescript/native-preview` or assume `tsgo` and `tsc` are
       interchangeable. If the stable v7 release cannot be obtained, report the
       specific blocker and keep the v7 task open.
-- [ ] Make only required API/type fixes. Check the internal type import,
+- [x] Make only required API/type fixes. Check the internal type import,
       paginator flags/components, ready event naming, deprecated DM permission
       fields versus contexts, interaction response methods, and registry
       payloads against the chosen discord.js version and Discord API docs.
       Do not migrate features just because a new API exists.
-- [ ] Add minimal `typecheck` and `format:check` package scripts so people and
+- [x] Add minimal `typecheck` and `format:check` package scripts so people and
       agents share reproducible checks; update docs to use them once available.
-- [ ] Change the pinned Bun base image version while preserving Docker stages,
+- [x] Change the pinned Bun base image version while preserving Docker stages,
       caching, install commands, and entrypoint. Check that the final image
       still runs with the intended dependency set; address a demonstrated
       packaging issue narrowly rather than redesigning the build.
@@ -164,13 +163,14 @@ calling the upgrade complete with an older or preview compiler.
 
 ## 4. Validate the implementation and keep the review small
 
-- [ ] Run a clean `bun install --frozen-lockfile` with the selected Bun version;
+- [x] Run a clean `bun install --frozen-lockfile` with the selected Bun version;
       confirm it succeeds without changing the committed lockfile. Verify the
       production frozen install used by Docker as well.
-- [ ] Run type checking, formatting on changed files, and `git diff --check`.
+- [x] Run type checking, formatting on changed files, and `git diff --check`.
       Resolve the recorded type failures and any upgrade regressions without
       weakening strictness.
-- [ ] Build the existing Dockerfile. Compare final dependency contents and
+- [x] Build Docker with the selected runtime (supplying the environment CA when
+      required). Compare final dependency contents and
       image size with the baseline using the same platform; investigate a
       material regression without treating image optimization as new scope.
 - [ ] With a dedicated development application/server, smoke-test startup and
@@ -178,15 +178,48 @@ calling the upgrade complete with an older or preview compiler.
       autocomplete, owner restrictions, pagination controls/timeouts, and
       prompt completion/timeouts. Run a container startup check with environment
       injection. Record unavailable credentials or untested paths explicitly.
-- [ ] Add a focused regression test if a compatibility fix changes substantive
+- [x] Add a focused regression test if a compatibility fix changes substantive
       behavior. Avoid a large testing framework or CI expansion for this work.
-- [ ] Follow the quick start from a fresh template checkout, then perform one
+- [x] Follow the setup from a clean source copy, then perform one
       small customization using the documented coding-agent instructions.
 
-Suggested PR sequence after this planning review: (1) README/onboarding,
-(2) JSDoc coverage, (3) dependency/toolchain upgrades with necessary compatibility
-fixes and validation. Update the plan as each step ships. Each PR should state
-what changed, what was verified, and any remaining limitation.
+Implementation PRs: [onboarding #8](https://github.com/EvolutionX-10/discordbot/pull/8),
+[JSDoc #9](https://github.com/EvolutionX-10/discordbot/pull/9), then the toolchain
+upgrade stacked on those branches. Review/merge them in that order.
+
+### Implementation validation (2026-11-23)
+
+- Stable TypeScript **7.0.2**, Bun **1.4.5**, and the direct dependency versions
+  in the table above are installed. `colorette` was already current. The Bun
+  lockfile was regenerated and its workspace specifiers now match the manifest.
+- `bun run typecheck`, `bun run format:check`, and all **8** Bun regression tests
+  pass. The tests were also checked with the v7 compiler using strict mode.
+  The three original static-check errors are resolved with public command
+  payload types, reply-option types, and component narrowing.
+- A clean development install and a separate production install both pass
+  `--frozen-lockfile`; SHA-256 checks confirm neither changes the lockfile.
+  Type checking and all tests also pass in the clean development copy.
+- The README's slash-command and listener snippets were added in that clean
+  copy, type-checked, and discovered/exercised offline without changing handlers.
+- The default Docker build fails in this managed environment with
+  `SELF_SIGNED_CERT_IN_CHAIN`, for both baseline and upgraded dependencies.
+  Both builds succeed with a temporary Dockerfile copy that mounts the host's
+  trusted CA bundle as a build secret for the same install commands. No proxy
+  certificate or certificate bypass is committed or included in the final image.
+- Container type checking and all tests pass in the `prerelease` stage. The
+  release image passes an offline smoke check for Bun version, environment
+  injection, import aliases, command/listener discovery, and eval's owner/test
+  scope. Its entrypoint remains `["bun", "start"]`.
+- The baseline release image demonstrably included development dependencies
+  because its broad prerelease copy overwrote the production install. The
+  upgrade narrows only that copy to `src` and retains the existing stages,
+  caching, install commands, and entrypoint. The final image excludes TypeScript,
+  Prettier, Bun development types, and tests. On linux/amd64, image size changes
+  from **277,024,298** to **251,180,767 bytes** with the same CA-build workaround.
+- No live Discord application or server credentials were used. Actual Gateway
+  login, REST registration, permissions, autocomplete, and collector behavior
+  against Discord still need the development-server smoke checks above. Offline
+  mocks and container discovery do not replace those checks.
 
 ## Upstream references
 

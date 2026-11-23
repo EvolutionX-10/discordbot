@@ -1,20 +1,20 @@
 import {
-	ActionRow,
 	ActionRowBuilder,
 	APISelectMenuOption,
-	APIStringSelectComponent,
 	BitFieldResolvable,
 	ButtonBuilder,
 	ButtonStyle,
 	CommandInteraction,
+	ComponentType,
 	EmbedBuilder,
+	InteractionReplyOptions,
 	Message,
-	MessageActionRowComponent,
 	MessageFlags,
 	RestOrArray,
 	SelectMenuComponentOptionData,
 	SelectMenuOptionBuilder, // TODO: remove this
 	StringSelectMenuBuilder,
+	TopLevelComponent,
 	User,
 } from 'discord.js';
 
@@ -149,7 +149,8 @@ export class Paginator {
 				embeds: [embeds[this.currentCount]],
 				components: rows,
 				withResponse: true,
-				flags: this.options.flags,
+				// BitField's mutable methods prevent assigning the narrower supported flag set directly.
+				flags: this.options.flags as InteractionReplyOptions['flags'],
 			});
 			msg = (interaction.channel?.messages.cache.get(interactionResponse.interaction.responseMessageId!) ||
 				(await interaction.channel?.messages.fetch(interactionResponse.interaction.responseMessageId!)))!;
@@ -295,13 +296,16 @@ export class Paginator {
 		return embeds;
 	}
 
-	private updateSelect(components: ActionRow<MessageActionRowComponent>[]) {
-		const selectMenuOption = (components[1].components[0].data as APIStringSelectComponent).options;
-		for (const option of selectMenuOption) {
+	private updateSelect(components: TopLevelComponent[]) {
+		const row = components[1];
+		if (row?.type !== ComponentType.ActionRow) throw new Error('Paginator select row is missing');
+		const select = row.components[0];
+		if (select?.type !== ComponentType.StringSelect) throw new Error('Paginator select menu is missing');
+		for (const option of select.options) {
 			if (option.value === `${this.currentCount}`) option.default = true;
 			else option.default = false;
 		}
-		return components;
+		return components.filter((component) => component.type === ComponentType.ActionRow);
 	}
 
 	private sanityChecks() {
@@ -341,12 +345,10 @@ interface PaginatorOptions {
 	/** Nonempty private reply for other users; otherwise a private paginator copy is created. */
 	wrongInteractionResponse?: string;
 	/** Flags for a new interaction reply only; cannot change visibility of an existing reply. */
-	flags?:
-		| BitFieldResolvable<
-				'SuppressEmbeds' | 'Ephemeral' | 'SuppressNotifications',
-				MessageFlags.SuppressEmbeds | MessageFlags.Ephemeral | MessageFlags.SuppressNotifications
-		  >
-		| undefined;
+	flags?: BitFieldResolvable<
+		'SuppressEmbeds' | 'Ephemeral' | 'SuppressNotifications',
+		MessageFlags.SuppressEmbeds | MessageFlags.Ephemeral | MessageFlags.SuppressNotifications
+	>;
 }
 
 type ButtonIds = '@paginator/first' | '@paginator/back' | '@paginator/stop' | '@paginator/forward' | '@paginator/last';

@@ -29,7 +29,7 @@ export default new Command({
 			filtered.map((choice) => ({
 				name: choice,
 				value: choice,
-			}))
+			})),
 		);
 	},
 });

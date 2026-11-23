@@ -22,7 +22,7 @@ export default new Command({
 				interaction.reply({
 					content: 'DM failed to send! Please open your DMs',
 					flags: MessageFlags.Ephemeral,
-				})
+				}),
 			);
 	},
 });
