@@ -1,8 +1,8 @@
 # Plan: an easy Discord bot starting point for humans and coding agents
 
 Status: implementation in progress after the planning PR merged. README and
-onboarding updates are implemented; JSDoc, dependency upgrades, and the remaining
-implementation checks are tracked below.
+onboarding updates and JSDoc coverage are implemented; dependency upgrades and
+the remaining implementation checks are tracked below.
 
 ## Goal and boundaries
 
@@ -87,20 +87,20 @@ guessing environment values, permissions, or nonexistent scripts.
 
 ## 2. Fill JSDoc gaps without changing behavior
 
-- [ ] Inventory public classes, constructors, methods, option interfaces, and
+- [x] Inventory public classes, constructors, methods, option interfaces, and
       exported helpers in `src/lib/structures`, `src/core`, and related enums.
       Retain accurate existing docs, including `Resolver` documentation.
-- [ ] Document `Command` options and command-type relationships, `Listener`
+- [x] Document `Command` options and command-type relationships, `Listener`
       event arguments and the appended client argument, and `Client` startup,
       configuration points, and registration side effects.
-- [ ] Document registry modes, guild/global scope, bulk replacement, deletion
+- [x] Document registry modes, guild/global scope, bulk replacement, deletion
       behavior, and asynchronous behavior as actually implemented. Do not claim
       that API requests are awaited where they currently are not.
-- [ ] Cover `Paginator` and `Prompt` options/defaults, timeouts, collector
+- [x] Cover `Paginator` and `Prompt` options/defaults, timeouts, collector
       filtering and cleanup, return values, and permission/intent assumptions.
       Clarify `Resolver` cache-only resolution and helper limitations, and
       explain logger levels.
-- [ ] Use concise summaries and relevant `@param`, `@returns`, `@throws`, and
+- [x] Use concise summaries and relevant `@param`, `@returns`, `@throws`, and
       `@example` tags. Add small copyable examples for the main extension points;
       avoid duplicating TypeScript types or commenting every obvious statement.
 
