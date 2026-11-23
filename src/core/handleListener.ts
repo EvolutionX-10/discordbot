@@ -1,14 +1,21 @@
 import { Client, Listener } from '#lib/structures';
 import { readdirSync } from 'fs';
 
+/**
+ * Imports one category level of `.ts` listeners from the repository root,
+ * stores them on the client, and attaches each handler with on/once.
+ * The client is appended after the normal event arguments. Calling this again
+ * attaches additional handlers; it is not a hot-reload/unsubscribe operation.
+ * @param client Client receiving listeners and optional REST debug logging.
+ * @throws If reading a directory or importing a listener fails.
+ */
 export async function handleListener(client: Client) {
-	client.restDebug &&
-		client.rest.on('restDebug', (r) => client.logger.debug(r));
+	client.restDebug && client.rest.on('restDebug', (r) => client.logger.debug(r));
 	const listenerFolders = readdirSync(`${process.cwd()}/src/listeners`);
 	for (const folder of listenerFolders) {
-		const listenerFiles = readdirSync(
-			`${process.cwd()}/src/listeners/${folder}`
-		).filter((file) => file.endsWith('.ts'));
+		const listenerFiles = readdirSync(`${process.cwd()}/src/listeners/${folder}`).filter((file) =>
+			file.endsWith('.ts'),
+		);
 
 		for (const file of listenerFiles) {
 			const path = `../listeners/${folder}/${file}`;

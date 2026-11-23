@@ -1,15 +1,9 @@
 import type { Snowflake } from 'discord-api-types/v10';
-import {
-	Collection,
-	CommandInteraction,
-	GuildBasedChannel,
-	GuildMember,
-	Role,
-	User,
-} from 'discord.js';
+import { Collection, CommandInteraction, GuildBasedChannel, GuildMember, Role, User } from 'discord.js';
 
 /**
- * It resolves mentions from the content of a command
+ * Resolves mentions using existing client/guild caches without REST fetches.
+ * Uncached entities are omitted; guild-specific results are empty outside a guild.
  * @example
  * ```ts
  * const resolved = new Resolver(content, interaction);
@@ -17,9 +11,12 @@ import {
  * ```
  */
 export class Resolver {
+	/** @param content Text to parse.
+	 * @param interaction Supplies the client and optional guild caches.
+	 */
 	public constructor(
 		private readonly content: string,
-		private readonly interaction: CommandInteraction
+		private readonly interaction: CommandInteraction,
 	) {}
 
 	readonly #regex = {
@@ -36,7 +33,7 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a user from the content.
+	 * Resolves cached users mentioned in the content.
 	 * @returns The collection of resolved {@link User users}.
 	 */
 	public get users(): Readonly<Collection<Snowflake, User>> {
@@ -49,7 +46,7 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a member from the content.
+	 * Resolves mentioned members from the current guild cache.
 	 * @returns The collection of resolved {@link GuildMember members}.
 	 */
 	public get members(): Readonly<Collection<Snowflake, GuildMember>> {
@@ -62,7 +59,7 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a channel from the content.
+	 * Resolves mentioned channels from the current guild cache.
 	 * @returns The collection of resolved {@link GuildBasedChannel channels}.
 	 */
 	public get channels(): Readonly<Collection<Snowflake, GuildBasedChannel>> {
@@ -75,7 +72,7 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a role from the content.
+	 * Resolves mentioned roles from the current guild cache.
 	 * @returns The collection of resolved {@link Role roles}.
 	 */
 	public get roles(): Readonly<Collection<Snowflake, Role>> {
@@ -88,8 +85,8 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a url from the content.
-	 * @returns The resolved url.
+	 * Parses the entire content as a URL without a base URL.
+	 * @returns The parsed URL, or null if URL construction throws.
 	 */
 	public get url(): Readonly<URL> | null {
 		try {
@@ -100,8 +97,9 @@ export class Resolver {
 	}
 
 	/**
-	 * Resolves a date from the content.
-	 * @returns The resolved date.
+	 * Passes the entire content to the Date constructor.
+	 * Invalid input can return an Invalid Date object; it is not checked with getTime().
+	 * @returns The Date object, or null only if construction throws.
 	 */
 	public get date(): Readonly<Date> | null {
 		try {

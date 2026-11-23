@@ -4,6 +4,15 @@ import { ApplicationCommandData, ApplicationCommandType, REST, Routes } from 'di
 import { readdirSync } from 'fs';
 import { greenBright, italic } from 'colorette';
 
+/**
+ * Dispatches the selected registration and/or deletion modes after login.
+ * Enabled modes run concurrently; use only the combination you intend.
+ * Shortcut/detailed registration and sync deletions currently dispatch some
+ * requests without awaiting them. Resolution and the timing log do not confirm
+ * completion of all Discord REST operations.
+ * @param client Logged-in client with discovered commands.
+ * @param registryOptions Flags enabling bulk registration, detailed updates, or deletion.
+ */
 export async function initiateCommands(client: Client, registryOptions: RegistryOptions) {
 	const { register, shortcut, sync } = registryOptions;
 	if (register && shortcut && sync)
@@ -21,6 +30,13 @@ export async function initiateCommands(client: Client, registryOptions: Registry
 	client.logger.info(`Commands Synced in ${greenBright(`${diff.toLocaleString()}ms`)}!`);
 }
 
+/**
+ * Discovers `.ts` commands one category level below `src/commands` using cwd.
+ * Each file must default-export a Command instance; its filename supplies a
+ * missing name. This populates client.commands without calling the Discord API.
+ * @param client Client whose command collection is populated.
+ * @throws If filesystem access, imports, or a missing default export fail.
+ */
 export async function handleRegistry(client: Client) {
 	const commandFolders = readdirSync(`${process.cwd()}/src/commands`);
 	for (const folder of commandFolders) {
@@ -42,6 +58,12 @@ export async function handleRegistry(client: Client) {
 	}
 }
 
+/**
+ * Bulk-replaces nonempty global and guild command lists via Discord API v10.
+ * All guild commands are submitted to the first guild command's first guild ID.
+ * Other registered commands in those submitted scopes are removed; empty local
+ * lists skip the request. The dispatched REST promises are not returned.
+ */
 function registerViaRoutes(client: Client) {
 	const rest = new REST({ version: '10' }).setToken(client.token!);
 	const guildCommands = client.commands.filter((c) => Boolean(c.commandRun) && Boolean(c.guildIds.length));
@@ -72,6 +94,7 @@ function registerViaRoutes(client: Client) {
 	}
 }
 
+/** Starts per-command updates for every guild target and global command, without awaiting them. */
 function registerCommands(client: Client) {
 	const applicationCommands = client.commands
 		.filter((c) => Boolean(c.commandRun) && c.type !== CommandType.Legacy)
@@ -81,6 +104,7 @@ function registerCommands(client: Client) {
 	}
 }
 
+/** Creates or edits one command in each configured scope, retaining unrelated commands. */
 async function checkFromClient(client: Client, command: Command) {
 	const { logger } = client;
 
@@ -146,6 +170,11 @@ async function checkFromClient(client: Client, command: Command) {
 	return;
 }
 
+/**
+ * Finds registrations absent by name locally and dispatches their deletion.
+ * Visits global commands and cached guilds only; does not create/update commands
+ * and does not await the deletion promises.
+ */
 async function syncCommands(client: Client) {
 	// Global
 	const { logger } = client;
@@ -210,17 +239,18 @@ function mapCommandType(
 	}
 }
 
+/** Optional registry operations; omitted flags are disabled. */
 interface RegistryOptions {
 	/**
-	 * Syncs commands with local commands
+	 * Deletes registrations missing locally from global scope and cached guilds.
 	 */
 	sync?: boolean;
 	/**
-	 * Registers commands in detailed way
+	 * Creates/updates individual commands for each target without deleting unrelated registrations.
 	 */
 	register?: boolean;
 	/**
-	 * Uses Native [Routes](https://discordjs.guide/creating-your-bot/command-deployment.html#command-registration)
+	 * Bulk-replaces nonempty command lists using native Routes; supports one guild target.
 	 */
 	shortcut?: boolean;
 }

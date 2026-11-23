@@ -18,6 +18,17 @@ import {
 	User,
 } from 'discord.js';
 
+/**
+ * Displays one embed at a time with navigation controls and an optional select menu.
+ * Only the target user controls that collector; other users can receive a private copy.
+ * Requires permission to send embeds and edit the bot's messages.
+ * @example
+ * ```ts
+ * await new Paginator({ time: 60_000 })
+ *   .setDescriptions(['First page', 'Second page'])
+ *   .run(interaction);
+ * ```
+ */
 export class Paginator {
 	private currentCount: number = 0;
 	private selectMenuOptions?: RestOrArray<
@@ -25,10 +36,15 @@ export class Paginator {
 	>;
 	private descriptions?: string[];
 
+	/** Page count from explicit embeds or descriptions; supply content before running. */
 	public get pages() {
 		return (this.options.embeds?.length ?? this.descriptions?.length)!;
 	}
 
+	/**
+	 * Stores options, supplies navigation emojis, and numbers constructor-provided embeds.
+	 * Disables the select menu if more than 25 pages are already present at construction.
+	 */
 	public constructor(private readonly options: PaginatorOptions = {}) {
 		this.options.emojis ??= ['⏮', '◀', '⏹', '▶', '⏭'];
 		this.options.embeds &&= this.options.embeds.map((embed, i) =>
@@ -40,21 +56,31 @@ export class Paginator {
 		if (this.pages > 25) this.options.includeSelectMenu = false;
 	}
 
+	/** Replaces explicit pages and returns this instance; these take precedence over descriptions. */
 	public setEmbeds(embeds: EmbedBuilder[]): this {
 		this.options.embeds = embeds;
 		return this;
 	}
 
+	/** Supplies text pages built from the optional template and returns this instance. */
 	public setDescriptions(descriptions: string[]): this {
 		this.descriptions = descriptions;
 		return this;
 	}
 
+	/**
+	 * Sets the initial page using a one-based count and returns this instance.
+	 * Keep count within 1..pages; this setter does not validate its bounds.
+	 */
 	public setCurrentCount(count: number): this {
 		this.currentCount = --count;
 		return this;
 	}
 
+	/**
+	 * Sets custom select entries and returns this instance.
+	 * Use zero-based numeric string values matching page indices; Discord allows 25 options.
+	 */
 	public setSelectMenuOptions(
 		...options: RestOrArray<SelectMenuOptionBuilder | APISelectMenuOption | SelectMenuComponentOptionData>
 	): this {
@@ -62,6 +88,15 @@ export class Paginator {
 		return this;
 	}
 
+	/**
+	 * Sends a channel message or replies/edits an interaction, then attaches controls.
+	 * @param messageOrInteraction Source message or interaction to display pages from.
+	 * @param user Allowed navigator; defaults to the message author or interaction user.
+	 * @returns Resolves after setup, not after the collector ends.
+	 * @throws If page configuration is invalid, the channel is unsendable, or sending fails.
+	 * Later collector errors are not forwarded to this promise. Controls are removed
+	 * when the collector ends; the timer defaults to ten minutes and resets on use.
+	 */
 	public async run(messageOrInteraction: Message | CommandInteraction, user?: User) {
 		this.sanityChecks();
 
@@ -291,13 +326,21 @@ export class Paginator {
 	}
 }
 
+/** Optional page content, appearance, reply flags, and collector behavior. */
 interface PaginatorOptions {
+	/** Collector timeout in milliseconds, reset on each accepted interaction; defaults to 600_000. */
 	time?: number;
+	/** Explicit pages, mutually exclusive with template; must be nonempty when supplied. */
 	embeds?: EmbedBuilder[];
+	/** Template for setDescriptions pages; generated descriptions/color/footer are applied. */
 	template?: EmbedBuilder;
+	/** Select navigation is enabled unless false; limited to 25 pages. */
 	includeSelectMenu?: boolean;
+	/** First, previous, stop, next, and last button emojis, in that order. */
 	emojis?: [string, string, string, string, string];
+	/** Nonempty private reply for other users; otherwise a private paginator copy is created. */
 	wrongInteractionResponse?: string;
+	/** Flags for a new interaction reply only; cannot change visibility of an existing reply. */
 	flags?:
 		| BitFieldResolvable<
 				'SuppressEmbeds' | 'Ephemeral' | 'SuppressNotifications',
