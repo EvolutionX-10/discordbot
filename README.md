@@ -1,6 +1,6 @@
 # Discord bot starter for humans and coding agents
 
-A minimal TypeScript Discord bot starter built with [Bun](https://bun.sh/) and
+A minimal TypeScript 7 Discord bot starter built with [Bun](https://bun.sh/) and
 [discord.js](https://discord.js.org/). Start with working commands and events,
 then shape it into your own bot, by hand or with a coding agent.
 
@@ -19,7 +19,7 @@ examples, and checks as people. No AI provider or API key is required.
   multi-stage Docker build.
 
 For automated contributions, start with [AGENTS.md](./AGENTS.md). The maintenance
-roadmap, including the planned TypeScript 7 upgrade, is in [plan.md](./plan.md).
+roadmap and validation status are in [plan.md](./plan.md).
 Basic JavaScript and TypeScript knowledge helps when reviewing generated changes;
 see the [JavaScript guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)
 and [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
@@ -28,7 +28,7 @@ and [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.htm
 
 1. [Use this template](https://github.com/EvolutionX-10/discordbot/generate),
    clone your new repository, and open a terminal in its root directory.
-2. Install **Bun 1.3.0**, matching the current [Dockerfile](./Dockerfile), using
+2. Install **Bun 1.4.5**, matching the current [Dockerfile](./Dockerfile), using
    the [Bun installation guide](https://bun.sh/docs/installation).
 3. Create a development application and bot in the
    [Discord Developer Portal](https://discord.com/developers/applications).
@@ -42,7 +42,7 @@ and [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.htm
 5. Install dependencies and copy the environment example:
 
    ```sh
-   bun install
+   bun install --frozen-lockfile
    cp .env.example .env
    ```
 
@@ -228,14 +228,19 @@ and the existing Prettier configuration.
 After installing dependencies, check types and format the files you changed:
 
 ```sh
-bun run tsc --noEmit -p src/tsconfig.json
-bun run prettier --check README.md
+bun run typecheck
+bun test
+bun run format:check
 git diff --check
 ```
 
-Replace `README.md` with your changed files. Only `dev` and `start` are package
-scripts today. There is no automated test suite; [plan.md](./plan.md) records
-existing type-check failures to address during the dependency upgrade. Report
-actual results and any unavailable live checks, then exercise your changes in
-the development server. Dependency/container changes should also pass a frozen
-install and Docker build.
+Type checking uses the stable TypeScript 7 compiler without emitting JavaScript.
+The Bun tests cover command payloads, discovery/aliases, and paginator navigation
+with mocked transport; they do not connect to Discord. `format:check` checks the
+repository with the existing Prettier configuration. To format specific files,
+use `bun run prettier --write <changed-files>`.
+
+Report actual results and any unavailable live checks, then exercise your changes
+in the development server. Dependency/container changes should also pass a frozen
+install and Docker build. [plan.md](./plan.md) records validation and remaining
+live checks.

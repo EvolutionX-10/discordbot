@@ -2,18 +2,18 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "ESNext",
-		"moduleResolution": "Node",
-		"baseUrl": ".",
+		"moduleResolution": "Bundler",
 		"paths": {
-			"#lib/*": ["lib/*"],
-			"#core": ["core/index.ts"],
-			"#root/*": ["*"]
+			"#lib/*": ["./lib/*"],
+			"#core": ["./core/index.ts"],
+			"#root/*": ["./*"]
 		},
 		"rootDir": ".",
 		"allowJs": true,
 		"noEmit": true,
 		"strict": true,
 		"noUnusedLocals": false,
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"types": ["bun", "node"]
 	}
 }

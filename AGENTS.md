@@ -86,18 +86,19 @@ in `Client.ts` before using owner-only commands. Message commands and `Prompt`
 need the Message Content intent enabled in the Developer Portal as well as in
 the client. Keep tokens out of source, examples, logs, prompts, and PRs.
 
-| Command                                     | Purpose                                                            |
-| ------------------------------------------- | ------------------------------------------------------------------ |
-| `bun dev`                                   | Watch and run locally; connects to Discord and registers commands. |
-| `bun start`                                 | Run without watch; also connects and registers commands.           |
-| `bun run tsc --noEmit -p src/tsconfig.json` | Check types with the installed compiler.                           |
-| `bun run prettier --check <changed-files>`  | Check formatting using the existing configuration.                 |
-| `docker build -t discordbot .`              | Build with the existing production Dockerfile.                     |
+| Command                        | Purpose                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| `bun dev`                      | Watch and run locally; connects to Discord and registers commands.               |
+| `bun start`                    | Run without watch; also connects and registers commands.                         |
+| `bun run typecheck`            | Check types with the installed TypeScript 7 compiler.                            |
+| `bun run format:check`         | Check repository formatting with the existing configuration.                     |
+| `bun test`                     | Run offline regression tests with mocked transport; does not connect to Discord. |
+| `docker build -t discordbot .` | Build with the existing production Dockerfile.                                   |
 
-There are currently only `dev` and `start` package scripts and no automated test
-suite. Do not claim a `test`, `lint`, or `typecheck` script exists until it is
-added. Report missing tools or existing failures accurately; see the baseline
-notes in `plan.md`.
+The package scripts are `dev`, `start`, `typecheck`, `format:check`, and `test`.
+Use the Bun built-in test runner for focused regressions; do not add another test
+framework. Report missing tools or failures accurately; `plan.md` distinguishes
+historical baseline findings from current validation.
 
 Starting the bot is a live integration action: the current shortcut registration
 uses bulk command updates, and synchronization can delete commands absent
@@ -123,7 +124,7 @@ instead of relying on its sample default.
 - For dependency upgrades, verify current releases, pin concrete versions,
   regenerate `bun.lock` with Bun, and recheck a frozen install. Keep runtime,
   types, compiler, and Docker Bun versions compatible. TypeScript 7 is the
-  roadmap target; do not substitute a preview silently.
+  installed stable compiler; do not substitute a preview silently.
 
 ## Verification and handoff
 

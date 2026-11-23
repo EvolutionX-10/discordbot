@@ -1,5 +1,4 @@
 import { CommandType } from '#lib/enums';
-import { AddUndefinedToPossiblyUndefinedPropertiesOfInterface } from 'discord-api-types/utils/internals';
 import {
 	ApplicationCommandOptionData,
 	AutocompleteInteraction,
@@ -8,7 +7,7 @@ import {
 	MessageContextMenuCommandInteraction,
 	PermissionResolvable,
 	UserContextMenuCommandInteraction,
-	RESTPostAPIChatInputApplicationCommandsJSONBody,
+	RESTPostAPIApplicationCommandsJSONBody,
 	APIApplicationCommandOption,
 	ApplicationCommandType,
 	Awaitable,
@@ -93,19 +92,30 @@ export class Command<T extends CommandType = CommandType> {
 	 * Builds the raw registration payload used by the shortcut registry.
 	 * Call after discovery has assigned a name; legacy commands are not API commands.
 	 * This method serializes data only and performs no REST request.
-	 * @returns The starter's application-command payload.
+	 * @returns The payload for the configured application-command kind.
+	 * @throws If called for a Legacy command or before a name is supplied.
 	 */
-	public buildAPIApplicationCommand(): RESTPostAPIChatInputApplicationCommandsJSONBody {
-		return {
-			name: this.data.name!,
-			description: this.description ?? '',
+	public buildAPIApplicationCommand(): RESTPostAPIApplicationCommandsJSONBody {
+		const common = {
+			name: this.name,
 			default_member_permissions: this.permissions?.toString(),
 			dm_permission: this.runInDM,
-			options: this.options as AddUndefinedToPossiblyUndefinedPropertiesOfInterface<APIApplicationCommandOption[]>,
-			type: this.type as unknown as AddUndefinedToPossiblyUndefinedPropertiesOfInterface<
-				ApplicationCommandType.ChatInput | undefined
-			>,
 		};
+		switch (this.type) {
+			case CommandType.ChatInput:
+				return {
+					...common,
+					type: ApplicationCommandType.ChatInput,
+					description: this.description ?? '',
+					options: this.options as APIApplicationCommandOption[] | undefined,
+				};
+			case CommandType.User:
+				return { ...common, type: ApplicationCommandType.User };
+			case CommandType.Message:
+				return { ...common, type: ApplicationCommandType.Message };
+			default:
+				throw new Error('Legacy commands cannot be registered as application commands');
+		}
 	}
 }
 

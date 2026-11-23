@@ -1,4 +1,4 @@
-FROM oven/bun:1.3.0 AS base
+FROM oven/bun:1.4.5 AS base
 WORKDIR /usr/src/app
 
 FROM base AS install
@@ -16,7 +16,7 @@ COPY . .
 
 FROM base AS release
 COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app .
+COPY --from=prerelease /usr/src/app/src ./src
 COPY --from=prerelease /usr/src/app/package.json .
 
 ENV TEST_SERVER_ID=953175228899553312
