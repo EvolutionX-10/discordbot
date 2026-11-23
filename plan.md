@@ -1,8 +1,8 @@
 # Plan: an easy Discord bot starting point for humans and coding agents
 
-Status: proposed for review. This first PR adds only `AGENTS.md` and this plan.
-README edits, JSDoc changes, dependency upgrades, and implementation checks below
-are follow-up work.
+Status: implementation in progress after the planning PR merged. README and
+onboarding updates are implemented; JSDoc, dependency upgrades, and the remaining
+implementation checks are tracked below.
 
 ## Goal and boundaries
 
@@ -19,7 +19,7 @@ There is no planned AI runtime, hosted service, database, framework migration,
 command-loader redesign, or Docker overhaul. Preserve existing behavior except
 for narrowly required compatibility fixes, documented in the upgrade PR.
 
-## Current baseline
+## Baseline at planning time
 
 - `package.json`: Bun executes `src/index.ts` directly; scripts are `dev` and
   `start`. There is no compilation step or automated test suite.
@@ -56,29 +56,29 @@ performed for this PR.
 
 ## 1. Make onboarding useful for both audiences
 
-- [ ] Update the README title, introduction, and feature wording around the
+- [x] Update the README title, introduction, and feature wording around the
       positioning above. Explain that agents help customize the source; using
       the template does not require an AI provider or API key.
-- [ ] Provide one short quick start: create a template repository, install the
+- [x] Provide one short quick start: create a template repository, install the
       documented Bun version, install dependencies, copy `.env.example`, set
       both environment values, configure the sample owner ID, and run `bun dev`.
       Correct the compilation claim and use examples matching current APIs.
-- [ ] Explain Discord application creation, bot invitation and required scopes,
+- [x] Explain Discord application creation, bot invitation and required scopes,
       channel permissions, and the Message Content intent needed by legacy
       commands and prompts. Keep slash-only needs distinct from message needs.
-- [ ] Add a short source map and recipes for adding a slash command, listener,
+- [x] Add a short source map and recipes for adding a slash command, listener,
       autocomplete, and a message/context-menu command using existing examples.
       Explain one-level discovery, default exports, names, and import aliases.
-- [ ] Add a coding-agent quick start that points to `AGENTS.md`, asks the user
+- [x] Add a coding-agent quick start that points to `AGENTS.md`, asks the user
       to describe the desired behavior, and gives bounded example prompts:
       “Add a `/hello` command using the existing Command wrapper; keep the
       handlers and Dockerfile as they are; report type and formatting checks,”
       and “Add a listener using the existing Listener wrapper; document its
       event and intent requirements.”
-- [ ] Document prefixes, presence, owner IDs, test-server scope, registry modes,
+- [x] Document prefixes, presence, owner IDs, test-server scope, registry modes,
       and the owner-only `eval` example. Explain that startup can replace command
       registrations and that sync can delete registrations missing locally.
-- [ ] Preserve the Docker build/run instructions, showing environment injection
+- [x] Preserve the Docker build/run instructions, showing environment injection
       for both variables and overriding the sample `TEST_SERVER_ID` default.
 
 Acceptance: a human or agent can find the right file, add one basic capability
